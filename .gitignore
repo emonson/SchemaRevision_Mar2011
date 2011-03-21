@@ -1,0 +1,6 @@
+# Ingnore these
+*.suo
+*.user
+SerializationTest1/obj/
+SerializationTest1/bin/
+
