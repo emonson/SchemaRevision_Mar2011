@@ -35,6 +35,12 @@
                 <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click"/>
                 <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" />
             </StackPanel>
+            <Button Name="SerializeButton" Width="80" 
+                    Content="Serialize" 
+                    VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Right"
+                    Margin="0,30"
+                    Click="SerializeButton_Click" />
         </StackPanel>
         
         <!-- VTK render window -->

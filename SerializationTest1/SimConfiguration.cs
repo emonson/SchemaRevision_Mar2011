@@ -11,58 +11,72 @@ namespace SerializationTest1
         public string experiment_name { get; set; }
         public string description { get; set; }
         public Scenario scenario { get; set; }
-        public Parameters parameters { get; set; }
+        public GlobalParameters global_parameters { get; set; }
+        public EntityRepository entity_repository { get; set; }
 
         public SimConfiguration()
         {
             experiment_name = "Experiment1";
             description = "Whole sim config description";
             scenario = new Scenario();
-            parameters = new Parameters();
+            global_parameters = new GlobalParameters();
+            entity_repository = new EntityRepository();
         }
     }
 
     public class Scenario
     {
         public string description {get; set;}
-        public Experiment experiment { get; set; }
+        public TimeConfig time_config { get; set; }
         public Environment environment { get; set; }
         private ObservableCollection<Region> _regions = new ObservableCollection<Region>();
         public ObservableCollection<Region> regions { get { return _regions; } set { _regions = value; } }
-        private List<Solfac> _solfacs = new List<Solfac>();
-        public List<Solfac> solfacs { get { return _solfacs; } set { _solfacs = value; } }
-        private List<CellSet> _cellsets = new List<CellSet>();
-        public List<CellSet> cellsets { get { return _cellsets; } set { _cellsets = value; } }
+        private ObservableCollection<Solfac> _solfacs = new ObservableCollection<Solfac>();
+        public ObservableCollection<Solfac> solfacs { get { return _solfacs; } set { _solfacs = value; } }
+        private ObservableCollection<CellSet> _cellsets = new ObservableCollection<CellSet>();
+        public ObservableCollection<CellSet> cellsets { get { return _cellsets; } set { _cellsets = value; } }
 
         public Scenario()
         {
             description = "Scenario description";
-            experiment = new Experiment();
+            time_config = new TimeConfig();
             environment = new Environment();
             // Regions list is empty by default
         }
     }
 
-    public class Parameters
+    public class GlobalParameters
     {
         public string description { get; set; }
         public ForceParams force_params { get; set; }
-        public MotileCellParams motile_cell_params { get; set; }
 
-        public Parameters()
+        public GlobalParameters()
         {
             description = "Default parameters description";
             force_params = new ForceParams();
-            motile_cell_params = new MotileCellParams();
         }
     }
 
-    public class Experiment
+    public class EntityRepository
+    {
+        private ObservableCollection<SolfacType> _solfac_types = new ObservableCollection<SolfacType>();
+        public ObservableCollection<SolfacType> solfac_types { get { return _solfac_types; } set { _solfac_types = value; } }
+        private ObservableCollection<CellType> _cell_types = new ObservableCollection<CellType>();
+        public ObservableCollection<CellType> cell_types { get { return _cell_types; } set { _cell_types = value; } }
+        private ObservableCollection<GaussianGradient> _gaussian_gradients = new ObservableCollection<GaussianGradient>();
+        public ObservableCollection<GaussianGradient> gaussian_gradients { get { return _gaussian_gradients; } set { _gaussian_gradients = value; } }
+
+        public EntityRepository()
+        {
+        }
+    }
+
+    public class TimeConfig
     {
         public double duration { get; set; }
         public double timestep { get; set; }
 
-        public Experiment()
+        public TimeConfig()
         {
             duration = 100;
             timestep = 3;
@@ -94,17 +108,21 @@ namespace SerializationTest1
                 new double[]{0.0, 0.0, 1.0, 0.0},
                 new double[]{0.0, 0.0, 0.0, 1.0} };
         public double[][] transform { get { return _transform; } set { _transform = value; } }
+        public bool region_visibility = true;
+        public System.Windows.Media.Color region_color = new System.Windows.Media.Color();
 
         public Region()
         {
             region_name = "Default Region";
             region_type = Shape.Ellipsoid;
+            region_color = System.Windows.Media.Color.FromRgb(255, 255, 255); 
         }
 
         public Region(string name, Shape type)
         {
             region_name = name;
             region_type = type;
+            region_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }
     }
 
@@ -113,19 +131,33 @@ namespace SerializationTest1
         public enum RelativePosition { Inside, Surface, Outside }
 
         public string cell_name { get; set; }
-        public string cell_type { get; set; }
+        public string cell_type_ref { get; set; }
         public int number { get; set; }
         // TODO: Need to abstract out positioning to include pos specification for single cell...
-        public string region { get; set; }
+        public string region_name_ref { get; set; }
         public RelativePosition wrt_region { get; set; }
+        public System.Windows.Media.Color cell_color = new System.Windows.Media.Color();
 
         public CellSet()
         {
             cell_name = "Default Cell";
-            cell_type = "MotileCell";
+            cell_type_ref = "MotileCell";
             number = 100;
-            region = "Sphere";
+            region_name_ref = "Default Region";
             wrt_region = RelativePosition.Inside;
+            cell_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
+        }
+    }
+
+    public class CellType
+    {
+        public string cell_type_name;
+        public MotileCellParams cell_type_parameters;
+
+        public CellType()
+        {
+            cell_type_name = "Default cell type name";
+            cell_type_parameters = new MotileCellParams();
         }
     }
 
@@ -134,7 +166,7 @@ namespace SerializationTest1
     public class Solfac
     {
         public string solfac_name  { get; set; }
-        public string solfac_type { get; set; }
+        public string solfac_type_ref { get; set; }
         public SolfacDistribution solfac_distribution { get; set; }
         private bool _is_time_varying = false;
         public bool is_time_varying { get { return _is_time_varying; } set { _is_time_varying = value; } }
@@ -144,14 +176,25 @@ namespace SerializationTest1
             get { return _amplitude_keyframes; }
             set { _amplitude_keyframes = value; }
         }
+        public System.Windows.Media.Color solfac_color = new System.Windows.Media.Color();
 
         public Solfac()
         {
             solfac_name = "Default Solfac";
-            solfac_type = "ccr7";
+            solfac_type_ref = "ccr7";
             // Default is static homogeneous level
-            // solfac_profile = new SolfacStaticProfile();
             solfac_distribution = new SolfacHomogeneousLevel();
+            solfac_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
+        }
+    }
+
+    public class SolfacType
+    {
+        public string solfac_type_name;
+
+        public SolfacType()
+        {
+            solfac_type_name = "Default solfac type name";
         }
     }
 
@@ -184,20 +227,33 @@ namespace SerializationTest1
     {
         private double[] _gradient_direction = new double[3] { 1.0, 0.0, 0.0 };
         public double[] gradient_direction { get { return _gradient_direction; } set { _gradient_direction = value; } }
-        private List<PosConcPair> _concentration_levels = new List<PosConcPair>();
-        public List<PosConcPair> concentration_levels { get { return _concentration_levels; } set { _concentration_levels = value; } }
+        public double min_concentration;
+        public double max_concentration;
 
         public SolfacLinearGradient()
         {
             distribution_name = "Linear Gradient";
-            // Want a default of one level on each end
-            concentration_levels.Add(new PosConcPair(0, 100));
-            concentration_levels.Add(new PosConcPair(1, 200));
+            min_concentration = 100.0;
+            max_concentration = 250.0;
         }
     }
 
     public class SolfacGaussianGradient : SolfacDistribution
     {
+        public double peak_concentration;
+        public string gaussian_gradient_name_ref;
+
+        public SolfacGaussianGradient()
+        {
+            distribution_name = "Gaussian Gradient";
+            peak_concentration = 100.0;
+            gaussian_gradient_name_ref = "Default gaussian gradient name";
+        }
+    }
+
+    public class GaussianGradient
+    {
+        public string gaussian_gradient_name;
         // Need to store a transform for the widget, but not clear
         // right now how that will be related to the sigmas in each
         // direction, or instead to a covariance matrix
@@ -207,57 +263,17 @@ namespace SerializationTest1
                 new double[]{0.0, 0.0, 1.0, 0.0},
                 new double[]{0.0, 0.0, 0.0, 1.0} };
         public double[][] transform { get { return _transform; } set { _transform = value; } }
-        public double peak_concentration;
         private double[] _gauss_sigma = new double[3] { 1.0, 1.0, 1.0 };
         public double[] gauss_sigma { get { return _gauss_sigma; } set { _gauss_sigma = value; } }
 
-        public SolfacGaussianGradient()
+        public GaussianGradient()
         {
-            distribution_name = "Gaussian Gradient";
-            peak_concentration = 100.0;
+            gaussian_gradient_name = "Default gaussian gradient name";
         }
     }
 
 
     // UTILITY CLASSES =======================
-    public class PosConcPair
-    {
-        private double _relative_pos;
-        public double relative_pos { 
-            get { return _relative_pos; }
-            set
-            {
-                if (value >= 0.0 && value <= 1.0)
-                {
-                    _relative_pos = value;
-                }
-            }
-        }
-        private double _concentration;
-        public double concentration {
-            get { return _concentration; }
-            set
-            {
-                if (value >= 0.0)
-                {
-                    _concentration = value;
-                }
-            }
-        }
-
-        public PosConcPair()
-        {
-            relative_pos = 0.0;
-            concentration = 0.0;
-        }
-
-        public PosConcPair(double rp, double c)
-        {
-            relative_pos = rp;
-            concentration = c;
-        }
-    }
-
     public class TimeAmpPair
     {
         // Not clear whether this should be time step or real time value...

@@ -67,19 +67,68 @@ namespace SerializationTest1
         public void CreateAndSerializeScenario()
         {
             var sim_config = new SimConfiguration();
+
+            // Experiment
+            sim_config.experiment_name = "Test experiment for XML serialization";
+            sim_config.scenario.time_config.duration = 100;
+            sim_config.scenario.time_config.timestep = 3;
+
+            // Entity Repository
+            EntityRepository repository = new EntityRepository();
+            // Possible solfac types
+            SolfacType st = new SolfacType();
+            st.solfac_type_name = "ccr7";
+            repository.solfac_types.Add(st);
+            st = new SolfacType();
+            st.solfac_type_name = "cxcl13";
+            repository.solfac_types.Add(st);
+            // Possible cell types
+            CellType ct = new CellType();
+            ct.cell_type_name = "bcell";
+            repository.cell_types.Add(ct);
+            ct = new CellType();
+            ct.cell_type_name = "tcell";
+            repository.cell_types.Add(ct);
+            sim_config.entity_repository = repository;
+            // Gaussian Gradients
+            GaussianGradient gg = new GaussianGradient();
+            gg.gaussian_gradient_name = "Special off-center gradient";
+            sim_config.entity_repository.gaussian_gradients.Add(gg);
+
+            // Regions (not part of repository right now...)
             sim_config.scenario.regions.Add(new Region("Sphere", Region.Shape.Ellipsoid));
             sim_config.scenario.regions.Add(new Region("Cube", Region.Shape.Rectangular));
-            sim_config.scenario.cellsets.Add(new CellSet());
-            sim_config.scenario.cellsets.Add(new CellSet());
 
+            // Cells
+            CellSet cs = new CellSet();
+            cs.cell_name = "Generic motile bcell";
+            cs.cell_type_ref = sim_config.entity_repository.cell_types[0].cell_type_name;
+            cs.number = 200;
+            cs.region_name_ref = sim_config.scenario.regions[0].region_name;
+            cs.wrt_region = CellSet.RelativePosition.Inside;
+            sim_config.scenario.cellsets.Add(cs);
+            cs = new CellSet();
+            cs.cell_name = "Generic motile tcell";
+            cs.cell_type_ref = sim_config.entity_repository.cell_types[1].cell_type_name;
+            cs.number = 200;
+            cs.region_name_ref = sim_config.scenario.regions[1].region_name;
+            cs.wrt_region = CellSet.RelativePosition.Outside;
+            sim_config.scenario.cellsets.Add(cs);
+
+            // Solfacs
             Solfac solfac = new Solfac();
+            solfac.solfac_type_ref = sim_config.entity_repository.solfac_types[0].solfac_type_name;
+            SolfacGaussianGradient sgg = new SolfacGaussianGradient();
+            sgg.gaussian_gradient_name_ref = sim_config.entity_repository.gaussian_gradients[0].gaussian_gradient_name;
+            solfac.solfac_distribution = sgg;
             sim_config.scenario.solfacs.Add(solfac);
-
             solfac = new Solfac();
+            solfac.solfac_type_ref = sim_config.entity_repository.solfac_types[1].solfac_type_name;
             solfac.is_time_varying = true;
             solfac.amplitude_keyframes.Add(new TimeAmpPair(0, 1));
             sim_config.scenario.solfacs.Add(solfac);
 
+            // Write out XML file
             this.SerializeDocument(sim_config);
         }
 
@@ -274,6 +323,11 @@ namespace SerializationTest1
 
         private void CellsListBox_GotFocus(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void SerializeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.SerializeDocument(this.SimConfig);
         }
     }
 }
