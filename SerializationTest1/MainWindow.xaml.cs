@@ -28,22 +28,15 @@ namespace SerializationTest1
         private XmlSerializer serializer = new XmlSerializer(typeof(SimConfiguration));
         private string filename = "test_native.xml";
         private RenderWindowControl rwc;
-        private vtkTransform widgetTransform = vtkTransform.New();
-        private vtkMatrix4x4 widgetMatrix = vtkMatrix4x4.New();
-        private vtkActor sphereActor;
+        private List<vtkActor> sphereActorList = new List<vtkActor>();
         private vtkBoxRepresentation boxRep;
         private vtkBoxWidget2 boxWidget;
-        private double[][] _transform_matrix = {
-                new double[]{2.0, 0.0, 0.0, 0.0},
-                new double[]{0.0, 2.0, 0.0, 0.0},
-                new double[]{0.0, 0.0, 2.0, 0.0},
-                new double[]{0.0, 0.0, 0.0, 1.0} };
-        public double[][] transform_matrix { get { return _transform_matrix; } set { _transform_matrix = value; } }
 
         public MainWindow()
         {
             InitializeComponent();
 
+            // NOTE: Comment this out to recreate initial XML scenario file
             // this.CreateAndSerializeScenario();
 
             this.DeserializeDocument();
@@ -92,7 +85,7 @@ namespace SerializationTest1
             sim_config.entity_repository = repository;
             // Gaussian Gradients
             GaussianGradient gg = new GaussianGradient();
-            gg.gaussian_gradient_name = "Special off-center gradient";
+            gg.gaussian_gradient_name = "Default on-center gradient";
             sim_config.entity_repository.gaussian_gradients.Add(gg);
 
             // Regions (not part of repository right now...)
@@ -170,12 +163,6 @@ namespace SerializationTest1
             rwc.RenderWindow.GetInteractor().SetPicker(vtkCellPicker.New());
             (istyle).SetCurrentStyleToTrackballCamera();
 
-            // add events to the iren instead of Observers
-            // rwc.RenderWindow.GetInteractor().LeftButtonPressEvt += new vtkObject.vtkObjectEventHandler(leftMouseDown);
-            
-            // Set initial transform values
-            this.TransferMatrixToVTKTransform(transform_matrix);
-
             // Demonstrate how to use the vtkBoxWidget 3D widget,
             vtkSphereSource sphere = vtkSphereSource.New();
             sphere.SetRadius(0.25);
@@ -183,17 +170,25 @@ namespace SerializationTest1
             vtkPolyDataMapper sphereMapper = vtkPolyDataMapper.New();
             sphereMapper.SetInputConnection(sphere.GetOutputPort());
 
-            sphereActor = vtkActor.New();
-            sphereActor.SetMapper(sphereMapper);
-            sphereActor.SetUserTransform(widgetTransform);
-            sphereActor.GetProperty().SetOpacity(0.5);
-            sphereActor.SetVisibility(0);
+            vtkActor sphereActor;
+            vtkTransform widgetTransform = vtkTransform.New();
+            List<Region> region_list = SimConfig.scenario.regions.ToList();
+            for (int ii = 0; ii < region_list.Count; ++ii)
+            {
+                this.TransferMatrixToVTKTransform(region_list[ii].transform_matrix, widgetTransform);
+                sphereActor = vtkActor.New();
+                sphereActor.SetMapper(sphereMapper);
+                sphereActor.SetUserTransform(widgetTransform);
+                sphereActor.GetProperty().SetOpacity(0.5);
+                sphereActor.SetVisibility(region_list[ii].region_visibility ? 1 : 0);
+                sphereActorList.Add(sphereActor);
+                ren.AddActor(sphereActorList[ii]);
+            }
 
             vtkCubeSource cube = vtkCubeSource.New();
             cube.SetXLength(5.0);
             cube.SetYLength(5.0);
             cube.SetZLength(5.0);
-            // cube.SetCenter(2, 0, 0);
 
             vtkOutlineSource outline = vtkOutlineSource.New();
             outline.SetBounds(-2, 2, -2, 2, -2, 2);
@@ -205,7 +200,6 @@ namespace SerializationTest1
             cubeActor.SetMapper(cubeMapper);
             cubeActor.VisibilityOn();
 
-            ren.AddActor(sphereActor);
             ren.AddActor(cubeActor);
 
             boxRep = vtkBoxRepresentation.New();
@@ -216,32 +210,36 @@ namespace SerializationTest1
             boxWidget.SetRepresentation( boxRep );
             boxWidget.SetPriority(1);
             boxWidget.InteractionEvt += this.boxInteractionCallback;
-            // boxWidget.On();
 
             ren.ResetCamera();
         }
 
-        public void TransferMatrixToVTKTransform(double[][] matrix)
+        // For reading C# matrices stored in scenario into VTK transforms
+        public void TransferMatrixToVTKTransform(double[][] matrix, vtkTransform transform)
         {
+            vtkMatrix4x4 vtk_matrix = vtkMatrix4x4.New();
             for (int ii = 0; ii < 4; ++ii)
             {
                 for (int jj = 0; jj < 4; ++jj)
                 {
-                    widgetMatrix.SetElement(ii, jj, matrix[ii][jj]);
+                    vtk_matrix.SetElement(ii, jj, matrix[ii][jj]);
                 }
             }
-            widgetTransform.SetMatrix(widgetMatrix);
+            transform.SetMatrix(vtk_matrix);
         }
 
-        public void TransferVTKTransformToMatrix(double[][] matrix)
+        // For storing the VTK transform generated by a box widget in a C# matrix
+        public void TransferVTKBoxWidgetTransformToMatrix(double[][] matrix)
         {
-            boxRep.GetTransform(widgetTransform);
-            widgetTransform.GetMatrix(widgetMatrix);
+            vtkMatrix4x4 vtk_matrix = vtkMatrix4x4.New();
+            vtkTransform vtk_transform = vtkTransform.New();
+            boxRep.GetTransform(vtk_transform);
+            vtk_transform.GetMatrix(vtk_matrix);
             for (int ii = 0; ii < 4; ++ii)
             {
                 for (int jj = 0; jj < 4; ++jj)
                 {
-                    matrix[ii][jj] = widgetMatrix.GetElement(ii, jj);
+                    matrix[ii][jj] = vtk_matrix.GetElement(ii, jj);
                 }
             }
         }
@@ -251,12 +249,12 @@ namespace SerializationTest1
             vtkBoxWidget2 wid = vtkBoxWidget2.SafeDownCast(sender);
             if (wid != null)
             {
+                vtkTransform vtk_transform = vtkTransform.New();
                 vtkBoxRepresentation rep = (vtkBoxRepresentation)wid.GetRepresentation();
-                rep.GetTransform(widgetTransform);
-                sphereActor.SetUserTransform(widgetTransform);
+                rep.GetTransform(vtk_transform);
+                sphereActorList[RegionsListBox.SelectedIndex].SetUserTransform(vtk_transform);
                 int reg_idx = RegionsListBox.SelectedIndex;
-                this.TransferVTKTransformToMatrix(this.SimConfig.scenario.regions[reg_idx].transform);
-                // Console.WriteLine("X Scale, {0}, {1}", transform_matrix[0][0], widgetMatrix.GetElement(0,0));
+                this.TransferVTKBoxWidgetTransformToMatrix(this.SimConfig.scenario.regions[reg_idx].transform_matrix);
             }
         }
 
@@ -282,23 +280,25 @@ namespace SerializationTest1
 
         private void RegionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            vtkTransform vtk_transform = vtkTransform.New();
             int reg_idx = RegionsListBox.SelectedIndex;
-            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].transform);
-            boxRep.SetTransform(this.widgetTransform);
-            sphereActor.SetUserTransform(this.widgetTransform);
+            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].transform_matrix, vtk_transform);
+            boxRep.SetTransform(vtk_transform);
+            sphereActorList[reg_idx].SetUserTransform(vtk_transform);
             boxWidget.On();
-            sphereActor.SetVisibility(1);
+            // sphereActor.SetVisibility(1);
             rwc.Invalidate();
         }
 
         private void RegionsListBox_GotFocus(object sender, RoutedEventArgs e)
         {
+            vtkTransform vtk_transform = vtkTransform.New();
             int reg_idx = RegionsListBox.SelectedIndex;
-            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].transform);
-            boxRep.SetTransform(this.widgetTransform);
-            sphereActor.SetUserTransform(this.widgetTransform);
+            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].transform_matrix, vtk_transform);
+            boxRep.SetTransform(vtk_transform);
+            sphereActorList[reg_idx].SetUserTransform(vtk_transform);
             boxWidget.On();
-            sphereActor.SetVisibility(1);
+            // sphereActor.SetVisibility(1);
             rwc.Invalidate();
         }
 
@@ -316,18 +316,15 @@ namespace SerializationTest1
             if (!(lbi_content != null || wfh_focus != null))
             {
                 boxWidget.Off();
-                sphereActor.SetVisibility(0);
+                // sphereActor.SetVisibility(0);
                 rwc.Invalidate();
             }
-        }
-
-        private void CellsListBox_GotFocus(object sender, RoutedEventArgs e)
-        {
         }
 
         private void SerializeButton_Click(object sender, RoutedEventArgs e)
         {
             this.SerializeDocument(this.SimConfig);
         }
+
     }
 }

@@ -23,24 +23,25 @@
                      SelectionChanged="RegionsListBox_SelectionChanged"
                      />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Name="AddButton"  Width="50" Content="Add" Click="AddButton_Click"/>
-                <Button Name="RemoveButton" Width="50" Content="Remove" Click="RemoveButton_Click" />
+                <Button Name="AddButton"  Width="50" Content="Add" Click="AddButton_Click" IsEnabled="False"/>
+                <Button Name="RemoveButton" Width="50" Content="Remove" Click="RemoveButton_Click" IsEnabled="False"/>
             </StackPanel>
             <TextBlock Text="Cells" Margin="0,5,0,0" />
             <ListBox Name="CellsListBox" Width="200" MinHeight="50" 
                      ItemsSource="{Binding Source={StaticResource cellsListView}}" 
-                     GotFocus="CellsListBox_GotFocus"
                      />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click"/>
-                <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" />
+                <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click" IsEnabled="False"/>
+                <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" IsEnabled="False"/>
             </StackPanel>
-            <Button Name="SerializeButton" Width="80" 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+                <Button Name="SerializeButton" Width="80" 
                     Content="Serialize" 
                     VerticalAlignment="Bottom" 
                     HorizontalAlignment="Right"
-                    Margin="0,30"
+                    Margin="0,5"
                     Click="SerializeButton_Click" />
+            </StackPanel>
         </StackPanel>
         
         <!-- VTK render window -->

@@ -102,12 +102,12 @@ namespace SerializationTest1
         public enum Shape { Rectangular, Ellipsoid }
         public string region_name { get; set; }
         public Shape region_type { get; set; }
-        private double[][] _transform = {
+        private double[][] _transform_matrix = {
                 new double[]{1.0, 0.0, 0.0, 0.0},
                 new double[]{0.0, 1.0, 0.0, 0.0},
                 new double[]{0.0, 0.0, 1.0, 0.0},
                 new double[]{0.0, 0.0, 0.0, 1.0} };
-        public double[][] transform { get { return _transform; } set { _transform = value; } }
+        public double[][] transform_matrix { get { return _transform_matrix; } set { _transform_matrix = value; } }
         public bool region_visibility = true;
         public System.Windows.Media.Color region_color = new System.Windows.Media.Color();
 
@@ -254,15 +254,15 @@ namespace SerializationTest1
     public class GaussianGradient
     {
         public string gaussian_gradient_name;
-        // Need to store a transform for the widget, but not clear
+        // Need to store a transform_matrix for the widget, but not clear
         // right now how that will be related to the sigmas in each
         // direction, or instead to a covariance matrix
-        private double[][] _transform = {
+        private double[][] _transform_matrix = {
                 new double[]{1.0, 0.0, 0.0, 0.0},
                 new double[]{0.0, 1.0, 0.0, 0.0},
                 new double[]{0.0, 0.0, 1.0, 0.0},
                 new double[]{0.0, 0.0, 0.0, 1.0} };
-        public double[][] transform { get { return _transform; } set { _transform = value; } }
+        public double[][] transform_matrix { get { return _transform_matrix; } set { _transform_matrix = value; } }
         private double[] _gauss_sigma = new double[3] { 1.0, 1.0, 1.0 };
         public double[] gauss_sigma { get { return _gauss_sigma; } set { _gauss_sigma = value; } }
 
