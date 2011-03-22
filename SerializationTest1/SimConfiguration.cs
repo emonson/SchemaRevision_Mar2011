@@ -29,19 +29,18 @@ namespace SerializationTest1
         public string description {get; set;}
         public TimeConfig time_config { get; set; }
         public Environment environment { get; set; }
-        private ObservableCollection<Region> _regions = new ObservableCollection<Region>();
-        public ObservableCollection<Region> regions { get { return _regions; } set { _regions = value; } }
-        private ObservableCollection<Solfac> _solfacs = new ObservableCollection<Solfac>();
-        public ObservableCollection<Solfac> solfacs { get { return _solfacs; } set { _solfacs = value; } }
-        private ObservableCollection<CellSet> _cellsets = new ObservableCollection<CellSet>();
-        public ObservableCollection<CellSet> cellsets { get { return _cellsets; } set { _cellsets = value; } }
+        public ObservableCollection<Region> regions { get; set; }
+        public ObservableCollection<Solfac> solfacs { get; set; }
+        public ObservableCollection<CellSet> cellsets { get; set; }
 
         public Scenario()
         {
             description = "Scenario description";
             time_config = new TimeConfig();
             environment = new Environment();
-            // Regions list is empty by default
+            regions = new ObservableCollection<Region>();
+            solfacs = new ObservableCollection<Solfac>();
+            cellsets = new ObservableCollection<CellSet>();
         }
     }
 
@@ -59,15 +58,15 @@ namespace SerializationTest1
 
     public class EntityRepository
     {
-        private ObservableCollection<SolfacType> _solfac_types = new ObservableCollection<SolfacType>();
-        public ObservableCollection<SolfacType> solfac_types { get { return _solfac_types; } set { _solfac_types = value; } }
-        private ObservableCollection<CellType> _cell_types = new ObservableCollection<CellType>();
-        public ObservableCollection<CellType> cell_types { get { return _cell_types; } set { _cell_types = value; } }
-        private ObservableCollection<GaussianGradient> _gaussian_gradients = new ObservableCollection<GaussianGradient>();
-        public ObservableCollection<GaussianGradient> gaussian_gradients { get { return _gaussian_gradients; } set { _gaussian_gradients = value; } }
+        public ObservableCollection<SolfacType> solfac_types { get; set; }
+        public ObservableCollection<CellType> cell_types { get; set; }
+        public ObservableCollection<GaussianSpecification> gaussian_gradients { get; set; }
 
         public EntityRepository()
         {
+            solfac_types = new ObservableCollection<SolfacType>();
+            cell_types = new ObservableCollection<CellType>();
+            gaussian_gradients = new ObservableCollection<GaussianSpecification>();
         }
     }
 
@@ -100,28 +99,30 @@ namespace SerializationTest1
     public class Region
     {
         public enum Shape { Rectangular, Ellipsoid }
+
         public string region_name { get; set; }
         public Shape region_type { get; set; }
-        private double[][] _transform_matrix = {
-                new double[]{1.0, 0.0, 0.0, 0.0},
-                new double[]{0.0, 1.0, 0.0, 0.0},
-                new double[]{0.0, 0.0, 1.0, 0.0},
-                new double[]{0.0, 0.0, 0.0, 1.0} };
-        public double[][] transform_matrix { get { return _transform_matrix; } set { _transform_matrix = value; } }
-        public bool region_visibility = true;
-        public System.Windows.Media.Color region_color = new System.Windows.Media.Color();
+        public BoxSpecification region_box_spec { get; set; }
+        public bool region_visibility { get; set; }
+        public System.Windows.Media.Color region_color { get; set; }
 
         public Region()
         {
             region_name = "Default Region";
             region_type = Shape.Ellipsoid;
-            region_color = System.Windows.Media.Color.FromRgb(255, 255, 255); 
+            region_box_spec = new BoxSpecification();
+            region_visibility = true;
+            region_color = new System.Windows.Media.Color();
+            region_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }
 
         public Region(string name, Shape type)
         {
             region_name = name;
             region_type = type;
+            region_box_spec = new BoxSpecification();
+            region_visibility = true;
+            region_color = new System.Windows.Media.Color();
             region_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }
     }
@@ -136,7 +137,7 @@ namespace SerializationTest1
         // TODO: Need to abstract out positioning to include pos specification for single cell...
         public string region_name_ref { get; set; }
         public RelativePosition wrt_region { get; set; }
-        public System.Windows.Media.Color cell_color = new System.Windows.Media.Color();
+        public System.Windows.Media.Color cell_color { get; set; }
 
         public CellSet()
         {
@@ -145,14 +146,15 @@ namespace SerializationTest1
             number = 100;
             region_name_ref = "Default Region";
             wrt_region = RelativePosition.Inside;
+            cell_color = new System.Windows.Media.Color();
             cell_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }
     }
 
     public class CellType
     {
-        public string cell_type_name;
-        public MotileCellParams cell_type_parameters;
+        public string cell_type_name { get; set; }
+        public MotileCellParams cell_type_parameters { get; set; }
 
         public CellType()
         {
@@ -168,15 +170,9 @@ namespace SerializationTest1
         public string solfac_name  { get; set; }
         public string solfac_type_ref { get; set; }
         public SolfacDistribution solfac_distribution { get; set; }
-        private bool _is_time_varying = false;
-        public bool is_time_varying { get { return _is_time_varying; } set { _is_time_varying = value; } }
-        private List<TimeAmpPair> _amplitude_keyframes = new List<TimeAmpPair>();
-        public List<TimeAmpPair> amplitude_keyframes
-        { 
-            get { return _amplitude_keyframes; }
-            set { _amplitude_keyframes = value; }
-        }
-        public System.Windows.Media.Color solfac_color = new System.Windows.Media.Color();
+        public bool solfac_is_time_varying { get; set; }
+        public List<TimeAmpPair> solfac_amplitude_keyframes { get; set; }
+        public System.Windows.Media.Color solfac_color { get; set; }
 
         public Solfac()
         {
@@ -184,6 +180,9 @@ namespace SerializationTest1
             solfac_type_ref = "ccr7";
             // Default is static homogeneous level
             solfac_distribution = new SolfacHomogeneousLevel();
+            solfac_is_time_varying = false;
+            solfac_amplitude_keyframes = new List<TimeAmpPair>();
+            solfac_color = new System.Windows.Media.Color();
             solfac_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }
     }
@@ -204,7 +203,7 @@ namespace SerializationTest1
      XmlInclude(typeof(SolfacGaussianGradient))]
     public abstract class SolfacDistribution
     {
-        public string distribution_name;
+        public string distribution_name { get; set; }
 
         public SolfacDistribution()
         {
@@ -225,14 +224,14 @@ namespace SerializationTest1
 
     public class SolfacLinearGradient : SolfacDistribution
     {
-        private double[] _gradient_direction = new double[3] { 1.0, 0.0, 0.0 };
-        public double[] gradient_direction { get { return _gradient_direction; } set { _gradient_direction = value; } }
-        public double min_concentration;
-        public double max_concentration;
+        public double[] gradient_direction { get; set; }
+        public double min_concentration { get; set; }
+        public double max_concentration { get; set; }
 
         public SolfacLinearGradient()
         {
             distribution_name = "Linear Gradient";
+            gradient_direction = new double[3] { 1.0, 0.0, 0.0 };
             min_concentration = 100.0;
             max_concentration = 250.0;
         }
@@ -240,40 +239,50 @@ namespace SerializationTest1
 
     public class SolfacGaussianGradient : SolfacDistribution
     {
-        public double peak_concentration;
-        public string gaussian_gradient_name_ref;
+        public double peak_concentration { get; set; }
+        public string gaussian_spec_name_ref { get; set; }
 
         public SolfacGaussianGradient()
         {
             distribution_name = "Gaussian Gradient";
             peak_concentration = 100.0;
-            gaussian_gradient_name_ref = "Default gaussian gradient name";
+            gaussian_spec_name_ref = "Default gaussian gradient name";
         }
     }
 
-    public class GaussianGradient
+    public class GaussianSpecification
     {
-        public string gaussian_gradient_name;
-        // Need to store a transform_matrix for the widget, but not clear
-        // right now how that will be related to the sigmas in each
-        // direction, or instead to a covariance matrix
-        private double[][] _transform_matrix = {
-                new double[]{1.0, 0.0, 0.0, 0.0},
-                new double[]{0.0, 1.0, 0.0, 0.0},
-                new double[]{0.0, 0.0, 1.0, 0.0},
-                new double[]{0.0, 0.0, 0.0, 1.0} };
-        public double[][] transform_matrix { get { return _transform_matrix; } set { _transform_matrix = value; } }
-        private double[] _gauss_sigma = new double[3] { 1.0, 1.0, 1.0 };
-        public double[] gauss_sigma { get { return _gauss_sigma; } set { _gauss_sigma = value; } }
+        public string gaussian_spec_name { get; set; }
+        public BoxSpecification gaussian_box_spec { get; set; }
+        public System.Windows.Media.Color gaussian_spec_color { get; set; }
 
-        public GaussianGradient()
+        public GaussianSpecification()
         {
-            gaussian_gradient_name = "Default gaussian gradient name";
+            gaussian_spec_name = "Default gaussian gradient name";
+            gaussian_box_spec = new BoxSpecification();
+            gaussian_spec_color = new System.Windows.Media.Color();
+            gaussian_spec_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }
     }
 
 
     // UTILITY CLASSES =======================
+    public class BoxSpecification
+    {
+        public double[][] transform_matrix { get; set; }
+        public bool box_visibility { get; set; }
+
+        public BoxSpecification()
+        {
+            box_visibility = true;
+            transform_matrix = new double[][] {
+                new double[]{1.0, 0.0, 0.0, 0.0},
+                new double[]{0.0, 1.0, 0.0, 0.0},
+                new double[]{0.0, 0.0, 1.0, 0.0},
+                new double[]{0.0, 0.0, 0.0, 1.0} };
+        }
+    }
+
     public class TimeAmpPair
     {
         // Not clear whether this should be time step or real time value...

@@ -26,7 +26,7 @@ namespace SerializationTest1
     {
         public SimConfiguration SimConfig { get; set; }
         private XmlSerializer serializer = new XmlSerializer(typeof(SimConfiguration));
-        private string filename = "test_native.xml";
+        private string filename = "Config\\test_native.xml";
         private RenderWindowControl rwc;
         private List<vtkActor> sphereActorList = new List<vtkActor>();
         private vtkBoxRepresentation boxRep;
@@ -36,7 +36,7 @@ namespace SerializationTest1
         {
             InitializeComponent();
 
-            // NOTE: Comment this out to recreate initial XML scenario file
+            // NOTE: Uncomment this to recreate initial XML scenario file
             // this.CreateAndSerializeScenario();
 
             this.DeserializeDocument();
@@ -84,8 +84,8 @@ namespace SerializationTest1
             repository.cell_types.Add(ct);
             sim_config.entity_repository = repository;
             // Gaussian Gradients
-            GaussianGradient gg = new GaussianGradient();
-            gg.gaussian_gradient_name = "Default on-center gradient";
+            GaussianSpecification gg = new GaussianSpecification();
+            gg.gaussian_spec_name = "Default on-center gradient";
             sim_config.entity_repository.gaussian_gradients.Add(gg);
 
             // Regions (not part of repository right now...)
@@ -112,13 +112,13 @@ namespace SerializationTest1
             Solfac solfac = new Solfac();
             solfac.solfac_type_ref = sim_config.entity_repository.solfac_types[0].solfac_type_name;
             SolfacGaussianGradient sgg = new SolfacGaussianGradient();
-            sgg.gaussian_gradient_name_ref = sim_config.entity_repository.gaussian_gradients[0].gaussian_gradient_name;
+            sgg.gaussian_spec_name_ref = sim_config.entity_repository.gaussian_gradients[0].gaussian_spec_name;
             solfac.solfac_distribution = sgg;
             sim_config.scenario.solfacs.Add(solfac);
             solfac = new Solfac();
             solfac.solfac_type_ref = sim_config.entity_repository.solfac_types[1].solfac_type_name;
-            solfac.is_time_varying = true;
-            solfac.amplitude_keyframes.Add(new TimeAmpPair(0, 1));
+            solfac.solfac_is_time_varying = true;
+            solfac.solfac_amplitude_keyframes.Add(new TimeAmpPair(0, 1));
             sim_config.scenario.solfacs.Add(solfac);
 
             // Write out XML file
@@ -175,7 +175,7 @@ namespace SerializationTest1
             List<Region> region_list = SimConfig.scenario.regions.ToList();
             for (int ii = 0; ii < region_list.Count; ++ii)
             {
-                this.TransferMatrixToVTKTransform(region_list[ii].transform_matrix, widgetTransform);
+                this.TransferMatrixToVTKTransform(region_list[ii].region_box_spec.transform_matrix, widgetTransform);
                 sphereActor = vtkActor.New();
                 sphereActor.SetMapper(sphereMapper);
                 sphereActor.SetUserTransform(widgetTransform);
@@ -254,7 +254,7 @@ namespace SerializationTest1
                 rep.GetTransform(vtk_transform);
                 sphereActorList[RegionsListBox.SelectedIndex].SetUserTransform(vtk_transform);
                 int reg_idx = RegionsListBox.SelectedIndex;
-                this.TransferVTKBoxWidgetTransformToMatrix(this.SimConfig.scenario.regions[reg_idx].transform_matrix);
+                this.TransferVTKBoxWidgetTransformToMatrix(this.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix);
             }
         }
 
@@ -282,7 +282,7 @@ namespace SerializationTest1
         {
             vtkTransform vtk_transform = vtkTransform.New();
             int reg_idx = RegionsListBox.SelectedIndex;
-            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].transform_matrix, vtk_transform);
+            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
             boxRep.SetTransform(vtk_transform);
             sphereActorList[reg_idx].SetUserTransform(vtk_transform);
             boxWidget.On();
@@ -294,7 +294,7 @@ namespace SerializationTest1
         {
             vtkTransform vtk_transform = vtkTransform.New();
             int reg_idx = RegionsListBox.SelectedIndex;
-            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].transform_matrix, vtk_transform);
+            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
             boxRep.SetTransform(vtk_transform);
             sphereActorList[reg_idx].SetUserTransform(vtk_transform);
             boxWidget.On();

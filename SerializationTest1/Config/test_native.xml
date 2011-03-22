@@ -15,47 +15,37 @@
     </environment>
     <regions>
       <Region>
-        <region_visibility>true</region_visibility>
-        <region_color>
-          <A>255</A>
-          <R>255</R>
-          <G>255</G>
-          <B>255</B>
-          <ScA>1</ScA>
-          <ScR>1</ScR>
-          <ScG>1</ScG>
-          <ScB>1</ScB>
-        </region_color>
         <region_name>Sphere</region_name>
         <region_type>Ellipsoid</region_type>
-        <transform_matrix>
-          <ArrayOfDouble>
-            <double>2.4272624711896631</double>
-            <double>0</double>
-            <double>0</double>
-            <double>-1.1228762538296579</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>6.1625775746646534</double>
-            <double>0</double>
-            <double>0.021032896539386448</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>0</double>
-            <double>2.427262471189664</double>
-            <double>-0.52618710931487866</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>0</double>
-            <double>0</double>
-            <double>1</double>
-          </ArrayOfDouble>
-        </transform_matrix>
-      </Region>
-      <Region>
+        <region_box_spec>
+          <transform_matrix>
+            <ArrayOfDouble>
+              <double>3.1670269825233728</double>
+              <double>0</double>
+              <double>0</double>
+              <double>1.0452884403015634</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>3.1670269825233737</double>
+              <double>0</double>
+              <double>-1.2891194306787954</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>0</double>
+              <double>3.1670269825233746</double>
+              <double>0.68707004856237486</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>1</double>
+            </ArrayOfDouble>
+          </transform_matrix>
+          <box_visibility>true</box_visibility>
+        </region_box_spec>
         <region_visibility>true</region_visibility>
         <region_color>
           <A>255</A>
@@ -67,59 +57,63 @@
           <ScG>1</ScG>
           <ScB>1</ScB>
         </region_color>
+      </Region>
+      <Region>
         <region_name>Cube</region_name>
         <region_type>Rectangular</region_type>
-        <transform_matrix>
-          <ArrayOfDouble>
-            <double>2.9852266778427525</double>
-            <double>0</double>
-            <double>0</double>
-            <double>0</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>2.9852266778427525</double>
-            <double>0</double>
-            <double>0</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>0</double>
-            <double>6.3022990042644373</double>
-            <double>0.82926808160542131</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>0</double>
-            <double>0</double>
-            <double>1</double>
-          </ArrayOfDouble>
-        </transform_matrix>
+        <region_box_spec>
+          <transform_matrix>
+            <ArrayOfDouble>
+              <double>4.1234105355701658</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0.10007602386156489</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>4.104790226523293</double>
+              <double>0</double>
+              <double>0.24082740679586934</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>0</double>
+              <double>1.0000000000000004</double>
+              <double>-1.1598379529475369</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>1</double>
+            </ArrayOfDouble>
+          </transform_matrix>
+          <box_visibility>true</box_visibility>
+        </region_box_spec>
+        <region_visibility>true</region_visibility>
+        <region_color>
+          <A>255</A>
+          <R>255</R>
+          <G>255</G>
+          <B>255</B>
+          <ScA>1</ScA>
+          <ScR>1</ScR>
+          <ScG>1</ScG>
+          <ScB>1</ScB>
+        </region_color>
       </Region>
     </regions>
     <solfacs>
       <Solfac>
-        <solfac_color>
-          <A>255</A>
-          <R>255</R>
-          <G>255</G>
-          <B>255</B>
-          <ScA>1</ScA>
-          <ScR>1</ScR>
-          <ScG>1</ScG>
-          <ScB>1</ScB>
-        </solfac_color>
         <solfac_name>Default Solfac</solfac_name>
         <solfac_type_ref>ccr7</solfac_type_ref>
         <solfac_distribution xsi:type="SolfacGaussianGradient">
           <distribution_name>Gaussian Gradient</distribution_name>
           <peak_concentration>100</peak_concentration>
-          <gaussian_gradient_name_ref>Special off-center gradient</gaussian_gradient_name_ref>
+          <gaussian_spec_name_ref>Default on-center gradient</gaussian_spec_name_ref>
         </solfac_distribution>
-        <is_time_varying>false</is_time_varying>
-        <amplitude_keyframes />
-      </Solfac>
-      <Solfac>
+        <solfac_is_time_varying>false</solfac_is_time_varying>
+        <solfac_amplitude_keyframes />
         <solfac_color>
           <A>255</A>
           <R>255</R>
@@ -130,24 +124,22 @@
           <ScG>1</ScG>
           <ScB>1</ScB>
         </solfac_color>
+      </Solfac>
+      <Solfac>
         <solfac_name>Default Solfac</solfac_name>
         <solfac_type_ref>cxcl13</solfac_type_ref>
         <solfac_distribution xsi:type="SolfacHomogeneousLevel">
           <distribution_name>Homogeneous</distribution_name>
           <concentration>100</concentration>
         </solfac_distribution>
-        <is_time_varying>true</is_time_varying>
-        <amplitude_keyframes>
+        <solfac_is_time_varying>true</solfac_is_time_varying>
+        <solfac_amplitude_keyframes>
           <TimeAmpPair>
             <time_value>0</time_value>
             <amplitude>1</amplitude>
           </TimeAmpPair>
-        </amplitude_keyframes>
-      </Solfac>
-    </solfacs>
-    <cellsets>
-      <CellSet>
-        <cell_color>
+        </solfac_amplitude_keyframes>
+        <solfac_color>
           <A>255</A>
           <R>255</R>
           <G>255</G>
@@ -156,14 +148,16 @@
           <ScR>1</ScR>
           <ScG>1</ScG>
           <ScB>1</ScB>
-        </cell_color>
+        </solfac_color>
+      </Solfac>
+    </solfacs>
+    <cellsets>
+      <CellSet>
         <cell_name>Generic motile bcell</cell_name>
         <cell_type_ref>bcell</cell_type_ref>
         <number>200</number>
         <region_name_ref>Sphere</region_name_ref>
         <wrt_region>Inside</wrt_region>
-      </CellSet>
-      <CellSet>
         <cell_color>
           <A>255</A>
           <R>255</R>
@@ -174,11 +168,23 @@
           <ScG>1</ScG>
           <ScB>1</ScB>
         </cell_color>
+      </CellSet>
+      <CellSet>
         <cell_name>Generic motile tcell</cell_name>
         <cell_type_ref>tcell</cell_type_ref>
         <number>200</number>
         <region_name_ref>Cube</region_name_ref>
         <wrt_region>Outside</wrt_region>
+        <cell_color>
+          <A>255</A>
+          <R>255</R>
+          <G>255</G>
+          <B>255</B>
+          <ScA>1</ScA>
+          <ScR>1</ScR>
+          <ScG>1</ScG>
+          <ScB>1</ScB>
+        </cell_color>
       </CellSet>
     </cellsets>
   </scenario>
@@ -242,40 +248,48 @@
       </CellType>
     </cell_types>
     <gaussian_gradients>
-      <GaussianGradient>
-        <gaussian_gradient_name>Special off-center gradient</gaussian_gradient_name>
-        <transform_matrix>
-          <ArrayOfDouble>
-            <double>1</double>
-            <double>0</double>
-            <double>0</double>
-            <double>0</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>1</double>
-            <double>0</double>
-            <double>0</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>0</double>
-            <double>1</double>
-            <double>0</double>
-          </ArrayOfDouble>
-          <ArrayOfDouble>
-            <double>0</double>
-            <double>0</double>
-            <double>0</double>
-            <double>1</double>
-          </ArrayOfDouble>
-        </transform_matrix>
-        <gauss_sigma>
-          <double>1</double>
-          <double>1</double>
-          <double>1</double>
-        </gauss_sigma>
-      </GaussianGradient>
+      <GaussianSpecification>
+        <gaussian_spec_name>Default on-center gradient</gaussian_spec_name>
+        <gaussian_box_spec>
+          <transform_matrix>
+            <ArrayOfDouble>
+              <double>1</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>1</double>
+              <double>0</double>
+              <double>0</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>0</double>
+              <double>1</double>
+              <double>0</double>
+            </ArrayOfDouble>
+            <ArrayOfDouble>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>1</double>
+            </ArrayOfDouble>
+          </transform_matrix>
+          <box_visibility>true</box_visibility>
+        </gaussian_box_spec>
+        <gaussian_spec_color>
+          <A>255</A>
+          <R>255</R>
+          <G>255</G>
+          <B>255</B>
+          <ScA>1</ScA>
+          <ScR>1</ScR>
+          <ScG>1</ScG>
+          <ScB>1</ScB>
+        </gaussian_spec_color>
+      </GaussianSpecification>
     </gaussian_gradients>
   </entity_repository>
 </SimConfiguration>
