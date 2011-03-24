@@ -1,14 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 
 namespace SerializationTest1
 {
-    public class SimConfiguration
+    public class SimConfigurator : ViewModelBase
     {
-        public string experiment_name { get; set; }
+        public string FileName { get; set; }
+        private XmlSerializer serializer = new XmlSerializer(typeof(SimConfiguration));
+        private SimConfiguration _simConfig;
+        public SimConfiguration SimConfig
+        {
+            get { return _simConfig; }
+            set
+            {
+                if (value != _simConfig)
+                {
+                    if (_simConfig != null)
+                    {
+                        _simConfig.PropertyChanged -= this.On_simConfig_PropertyChanged;
+                    }
+                    _simConfig = value;
+                    this._simConfig.PropertyChanged += this.On_simConfig_PropertyChanged;
+                    // Notify of PropertyChanged if entire object is reassigned
+                    base.OnPropertyChanged("SimConfig");
+                }
+            }
+        }
+
+        public SimConfigurator(string filename)
+        {
+            if (filename == null)
+                throw new ArgumentNullException("filename");
+            
+            this.FileName = filename;
+            this.SimConfig = new SimConfiguration();
+        }
+
+        // Also notify of property changed if sub-elements have changed.
+        void On_simConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged("SimConfig");
+        }
+
+        public void SerializeSimConfig()
+        {
+            TextWriter myWriter = new StreamWriter(FileName);
+            serializer.Serialize(myWriter, SimConfig);
+            myWriter.Close();
+        }
+
+        public void DeserializeSimConfig()
+        {
+            FileStream myFileStream = new FileStream(FileName, FileMode.Open);
+            SimConfig = (SimConfiguration)serializer.Deserialize(myFileStream);
+            myFileStream.Close();
+        }
+    }
+    
+    public class SimConfiguration : ViewModelBase
+    {
+        private string _experiment_name;
+        public string experiment_name
+        {
+            get { return _experiment_name; }
+            set
+            {
+                if (_experiment_name != value)
+                {
+                    _experiment_name = value;
+                    base.OnPropertyChanged("experiment_name");
+                }
+            }
+        }
         public string description { get; set; }
         public Scenario scenario { get; set; }
         public GlobalParameters global_parameters { get; set; }

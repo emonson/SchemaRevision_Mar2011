@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -24,13 +25,13 @@ namespace SerializationTest1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public SimConfiguration SimConfig { get; set; }
-        private XmlSerializer serializer = new XmlSerializer(typeof(SimConfiguration));
+        private SimConfigurator configurator;
         private string filename = "Config\\test_native.xml";
         private RenderWindowControl rwc;
         private List<vtkActor> sphereActorList = new List<vtkActor>();
         private vtkBoxRepresentation boxRep;
         private vtkBoxWidget2 boxWidget;
+        private Simulation sim;
 
         public MainWindow()
         {
@@ -39,7 +40,10 @@ namespace SerializationTest1
             // NOTE: Uncomment this to recreate initial XML scenario file
             // this.CreateAndSerializeScenario();
 
-            this.DeserializeDocument();
+            configurator = new SimConfigurator(filename);
+            configurator.DeserializeSimConfig();
+
+            sim = new Simulation(configurator);
 
             this.SetUpRenderWindow();
 
@@ -47,19 +51,20 @@ namespace SerializationTest1
             CollectionViewSource ldv = this.Resources["regionsListView"] as CollectionViewSource;
             if (ldv != null)
             {
-                ldv.Source = SimConfig.scenario.regions;
+                ldv.Source = configurator.SimConfig.scenario.regions;
             }
             ldv = this.Resources["cellsListView"] as CollectionViewSource;
             if (ldv != null)
             {
-                ldv.Source = SimConfig.scenario.cellsets;
+                ldv.Source = configurator.SimConfig.scenario.cellsets;
             }
 
         }
 
         public void CreateAndSerializeScenario()
         {
-            var sim_config = new SimConfiguration();
+            var config = new SimConfigurator(filename);
+            var sim_config = config.SimConfig;
 
             // Experiment
             sim_config.experiment_name = "Test experiment for XML serialization";
@@ -122,26 +127,7 @@ namespace SerializationTest1
             sim_config.scenario.solfacs.Add(solfac);
 
             // Write out XML file
-            this.SerializeDocument(sim_config);
-        }
-
-        private void SerializeDocument(SimConfiguration sim_config)
-        {
-            // Native XML serializer
-            TextWriter myWriter = new StreamWriter(filename);
-            serializer.Serialize(myWriter, sim_config);
-            myWriter.Close();
-        }
-
-        private void DeserializeDocument()
-        {
-            // Writing the file requires a StreamWriter.
-            FileStream myFileStream = new FileStream(filename, FileMode.Open);
-
-            /* Deserializes the class and closes the TextWriter. */
-            SimConfig = (SimConfiguration)serializer.Deserialize(myFileStream);
-            
-            myFileStream.Close();
+            config.SerializeSimConfig();
         }
 
         private void SetUpRenderWindow()
@@ -172,7 +158,7 @@ namespace SerializationTest1
 
             vtkActor sphereActor;
             vtkTransform widgetTransform = vtkTransform.New();
-            List<Region> region_list = SimConfig.scenario.regions.ToList();
+            List<Region> region_list = configurator.SimConfig.scenario.regions.ToList();
             for (int ii = 0; ii < region_list.Count; ++ii)
             {
                 this.TransferMatrixToVTKTransform(region_list[ii].region_box_spec.transform_matrix, widgetTransform);
@@ -254,7 +240,7 @@ namespace SerializationTest1
                 rep.GetTransform(vtk_transform);
                 sphereActorList[RegionsListBox.SelectedIndex].SetUserTransform(vtk_transform);
                 int reg_idx = RegionsListBox.SelectedIndex;
-                this.TransferVTKBoxWidgetTransformToMatrix(this.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix);
+                this.TransferVTKBoxWidgetTransformToMatrix(this.configurator.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix);
             }
         }
 
@@ -282,7 +268,7 @@ namespace SerializationTest1
         {
             vtkTransform vtk_transform = vtkTransform.New();
             int reg_idx = RegionsListBox.SelectedIndex;
-            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
+            this.TransferMatrixToVTKTransform(this.configurator.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
             boxRep.SetTransform(vtk_transform);
             sphereActorList[reg_idx].SetUserTransform(vtk_transform);
             boxWidget.On();
@@ -294,7 +280,7 @@ namespace SerializationTest1
         {
             vtkTransform vtk_transform = vtkTransform.New();
             int reg_idx = RegionsListBox.SelectedIndex;
-            this.TransferMatrixToVTKTransform(this.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
+            this.TransferMatrixToVTKTransform(this.configurator.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
             boxRep.SetTransform(vtk_transform);
             sphereActorList[reg_idx].SetUserTransform(vtk_transform);
             boxWidget.On();
@@ -323,8 +309,10 @@ namespace SerializationTest1
 
         private void SerializeButton_Click(object sender, RoutedEventArgs e)
         {
-            this.SerializeDocument(this.SimConfig);
-        }
+            // DEBUG property change notification
+            // configurator.SimConfig.experiment_name = "NewExperiment";
 
+            configurator.SerializeSimConfig();
+        }
     }
 }
