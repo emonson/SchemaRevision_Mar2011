@@ -20,22 +20,22 @@
         <region_box_spec>
           <transform_matrix>
             <ArrayOfDouble>
-              <double>3.1670269825233728</double>
+              <double>2.1430413711998479</double>
               <double>0</double>
               <double>0</double>
-              <double>1.0452884403015634</double>
+              <double>0</double>
             </ArrayOfDouble>
             <ArrayOfDouble>
               <double>0</double>
-              <double>3.1670269825233737</double>
+              <double>2.1430413711998479</double>
               <double>0</double>
-              <double>-1.2891194306787954</double>
+              <double>0</double>
             </ArrayOfDouble>
             <ArrayOfDouble>
               <double>0</double>
               <double>0</double>
-              <double>3.1670269825233746</double>
-              <double>0.68707004856237486</double>
+              <double>2.1430413711998479</double>
+              <double>0</double>
             </ArrayOfDouble>
             <ArrayOfDouble>
               <double>0</double>
@@ -64,22 +64,22 @@
         <region_box_spec>
           <transform_matrix>
             <ArrayOfDouble>
-              <double>4.1234105355701658</double>
+              <double>1</double>
               <double>0</double>
               <double>0</double>
-              <double>0.10007602386156489</double>
+              <double>0</double>
             </ArrayOfDouble>
             <ArrayOfDouble>
               <double>0</double>
-              <double>4.104790226523293</double>
+              <double>1</double>
               <double>0</double>
-              <double>0.24082740679586934</double>
+              <double>0</double>
             </ArrayOfDouble>
             <ArrayOfDouble>
               <double>0</double>
               <double>0</double>
-              <double>1.0000000000000004</double>
-              <double>-1.1598379529475369</double>
+              <double>3.3734929776046574</double>
+              <double>0.59337324440116435</double>
             </ArrayOfDouble>
             <ArrayOfDouble>
               <double>0</double>
@@ -108,7 +108,7 @@
         <solfac_name>Default Solfac</solfac_name>
         <solfac_type_ref>ccr7</solfac_type_ref>
         <solfac_distribution xsi:type="SolfacGaussianGradient">
-          <distribution_name>Gaussian Gradient</distribution_name>
+          <solfac_distribution_type>GaussianGradient</solfac_distribution_type>
           <peak_concentration>100</peak_concentration>
           <gaussian_spec_name_ref>Default on-center gradient</gaussian_spec_name_ref>
         </solfac_distribution>
@@ -129,7 +129,7 @@
         <solfac_name>Default Solfac</solfac_name>
         <solfac_type_ref>cxcl13</solfac_type_ref>
         <solfac_distribution xsi:type="SolfacHomogeneousLevel">
-          <distribution_name>Homogeneous</distribution_name>
+          <solfac_distribution_type>Homogeneous</solfac_distribution_type>
           <concentration>100</concentration>
         </solfac_distribution>
         <solfac_is_time_varying>true</solfac_is_time_varying>

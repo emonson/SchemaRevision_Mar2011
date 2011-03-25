@@ -8,22 +8,27 @@ namespace SerializationTest1
 {
     class Simulation
     {
-        private SimConfigurator Configurator;
-        private bool _sim_is_dirty = false;
+        private SimConfigurator _configurator;
+        private string _previous_config_string;
 
         public Simulation(SimConfigurator configurator)
         {
             if (configurator == null)
                 throw new ArgumentNullException("configurator");
 
-            Configurator = configurator;
-            Configurator.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(SimConfig_PropertyChanged);
+            _configurator = configurator;
+            _previous_config_string = _configurator.SerializeSimConfigToString();
         }
 
-        void SimConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        public bool ScenarioChanged()
         {
-            _sim_is_dirty = true;
-            System.Windows.MessageBox.Show(String.Format("The '{0}' property has changed!", e.PropertyName));
+            string current_sim_string = _configurator.SerializeSimConfigToString();
+            bool changed_since_last_check = (current_sim_string != _previous_config_string);
+
+            // Reset for next check
+            _previous_config_string = current_sim_string;
+
+            return changed_since_last_check;
         }
     }
 }
