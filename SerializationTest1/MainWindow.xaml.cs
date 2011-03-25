@@ -43,6 +43,9 @@ namespace SerializationTest1
             configurator = new SimConfigurator(filename);
             configurator.DeserializeSimConfig();
 
+            // DEBUG: Bad hard-coded test...
+            configurator.SimConfig.scenario.regions[0].region_box_spec.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(SimConfig_PropertyChanged);
+
             sim = new Simulation(configurator);
 
             this.SetUpRenderWindow();
@@ -94,8 +97,8 @@ namespace SerializationTest1
             sim_config.entity_repository.gaussian_gradients.Add(gg);
 
             // Regions (not part of repository right now...)
-            sim_config.scenario.regions.Add(new Region("Sphere", Region.Shape.Ellipsoid));
-            sim_config.scenario.regions.Add(new Region("Cube", Region.Shape.Rectangular));
+            sim_config.scenario.regions.Add(new Region("Sphere", RegionShape.Ellipsoid));
+            sim_config.scenario.regions.Add(new Region("Cube", RegionShape.Rectangular));
 
             // Cells
             CellSet cs = new CellSet();
@@ -319,6 +322,11 @@ namespace SerializationTest1
             {
                 System.Windows.MessageBox.Show("Scenario changed");
             }
+        }
+
+        void SimConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            this.rwc.Invalidate();
         }
     }
 }

@@ -2,9 +2,60 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:c="clr-namespace:SerializationTest1"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="450" Width="525">
     <Window.Resources>
+        <ObjectDataProvider x:Key="regionShapes"
+                    MethodName="GetValues" 
+                    ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="c:RegionShape" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        
+        <DataTemplate x:Key="regionDetailsTemplate">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Path=region_name}" />
+                <ComboBox ItemsSource="{Binding Source={StaticResource regionShapes}}"
+                          SelectedValue="{Binding Path=region_type}"
+                          IsSynchronizedWithCurrentItem="true" />
+                <Slider Name="x_scale_slider"
+                        Orientation="Horizontal"
+                        Width="60"
+                        RenderTransform="1.0,0,0,0.5,0,4"
+                        Minimum="0" 
+                        Maximum="10" 
+                        Value="{Binding Path=region_box_spec.x_scale}" 
+                    />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="cellDetailsTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0" HorizontalAlignment="Right">
+                    <TextBlock Text="number" Margin="6,0" />
+                </DockPanel>
+                <DockPanel Grid.Column="1" VerticalAlignment="Center">
+                    <Slider Name="number_slider"
+                        Orientation="Horizontal"
+                        Width="60"
+                        RenderTransform="1.0,0,0,0.5,0,4"
+                        Minimum="1" 
+                        Maximum="1000" 
+                        Value="{Binding Path=number}" 
+                        IsSnapToTickEnabled="True" 
+                        TickFrequency="1" 
+                    />
+                    <TextBlock Name="NumberReadout" Text="{Binding ElementName=number_slider, Path=Value}" />
+                </DockPanel>
+            </Grid>
+        </DataTemplate>
+
         <CollectionViewSource x:Key="regionsListView" />
         <CollectionViewSource x:Key="cellsListView" />
     </Window.Resources>
@@ -14,18 +65,25 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Vertical" Grid.Column="0">
+        <StackPanel Orientation="Vertical" Grid.Column="0" Margin="8">
+            
+            <!-- Regions -->
             <TextBlock Text="Regions" Margin="0,5,0,0" />
             <ListBox Name="RegionsListBox" Width="200" MinHeight="50" 
                      ItemsSource="{Binding Source={StaticResource regionsListView}}"
                      GotFocus="RegionsListBox_GotFocus"
-                     LostFocus="RegionsListBox_LostFocus"
                      SelectionChanged="RegionsListBox_SelectionChanged"
                      />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Name="AddButton"  Width="50" Content="Add" Click="AddButton_Click" IsEnabled="False"/>
                 <Button Name="RemoveButton" Width="50" Content="Remove" Click="RemoveButton_Click" IsEnabled="False"/>
             </StackPanel>
+            <ContentControl Name="RegionDetails"
+                            Content="{Binding Source={StaticResource regionsListView}}" 
+                            ContentTemplate="{StaticResource regionDetailsTemplate}" 
+                            Margin="8"/>
+
+            <!-- Cells -->
             <TextBlock Text="Cells" Margin="0,5,0,0" />
             <ListBox Name="CellsListBox" Width="200" MinHeight="50" 
                      ItemsSource="{Binding Source={StaticResource cellsListView}}" 
@@ -34,7 +92,12 @@
                 <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click" IsEnabled="False"/>
                 <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" IsEnabled="False"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+            <ContentControl Name="CellDetails"
+                            Content="{Binding Source={StaticResource cellsListView}}" 
+                            ContentTemplate="{StaticResource cellDetailsTemplate}" 
+                            Margin="8"/>
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
                 <Button Name="SerializeButton" Width="80" 
                     Content="Serialize" 
                     VerticalAlignment="Bottom" 

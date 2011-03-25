@@ -136,12 +136,12 @@ namespace SerializationTest1
         }
     }
 
+    public enum RegionShape { Rectangular, Ellipsoid }
+    
     public class Region
     {
-        public enum Shape { Rectangular, Ellipsoid }
-
         public string region_name { get; set; }
-        public Shape region_type { get; set; }
+        public RegionShape region_type { get; set; }
         public BoxSpecification region_box_spec { get; set; }
         public bool region_visibility { get; set; }
         public System.Windows.Media.Color region_color { get; set; }
@@ -149,14 +149,14 @@ namespace SerializationTest1
         public Region()
         {
             region_name = "Default Region";
-            region_type = Shape.Ellipsoid;
+            region_type = RegionShape.Ellipsoid;
             region_box_spec = new BoxSpecification();
             region_visibility = true;
             region_color = new System.Windows.Media.Color();
             region_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }
 
-        public Region(string name, Shape type)
+        public Region(string name, RegionShape type)
         {
             region_name = name;
             region_type = type;
@@ -237,14 +237,14 @@ namespace SerializationTest1
         }
     }
 
+    public enum SolfacDistributionType { Homogeneous, LinearGradient, GaussianGradient }
+
     // Base class for homog, linear, gauss distributions
     [XmlInclude(typeof(SolfacHomogeneousLevel)),
      XmlInclude(typeof(SolfacLinearGradient)),
      XmlInclude(typeof(SolfacGaussianGradient))]
     public abstract class SolfacDistribution
     {
-        public enum SolfacDistributionType { Homogeneous, LinearGradient, GaussianGradient }
-
         // NOTE: This is a little dangerous since someone may change the Type label,
         // but the deserialization doesn't work if the "set" method is marked protected...
         public SolfacDistributionType solfac_distribution_type { get; set; }
@@ -314,6 +314,18 @@ namespace SerializationTest1
     {
         public double[][] transform_matrix { get; set; }
         public bool box_visibility { get; set; }
+        public double x_scale
+        {
+            get { return transform_matrix[0][0]; }
+            set
+            {
+                if (value != transform_matrix[0][0])
+                {
+                    transform_matrix[0][0] = value;
+                    base.OnPropertyChanged("x_scale");
+                }
+            }
+        }
 
         public BoxSpecification()
         {
@@ -331,6 +343,8 @@ namespace SerializationTest1
             {
                 transform_matrix[ii][jj] = value;
                 base.OnPropertyChanged("transform_matrix");
+                if (ii == 0 && jj == 0)
+                    base.OnPropertyChanged("x_scale");
             }
         }
     }
