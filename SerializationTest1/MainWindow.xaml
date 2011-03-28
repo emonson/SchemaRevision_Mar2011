@@ -4,8 +4,16 @@
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:c="clr-namespace:SerializationTest1"
-        Title="MainWindow" Height="450" Width="525">
+        Title="MainWindow" Height="750" Width="525">
     <Window.Resources>
+        <CollectionViewSource x:Key="regionsListView" />
+        <CollectionViewSource x:Key="gaussianGradientsListView" />
+        <CollectionViewSource x:Key="cellsListView" />
+        <CollectionViewSource x:Key="cellTypesListView" />
+        <CollectionViewSource x:Key="solfacsListView" />
+        <CollectionViewSource x:Key="solfacTypesListView" />
+
+        <!-- REGIONS -->
         <ObjectDataProvider x:Key="regionShapes"
                     MethodName="GetValues" 
                     ObjectType="{x:Type sys:Enum}">
@@ -13,21 +21,105 @@
                 <x:Type TypeName="c:RegionShape" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
-        
+
+        <DataTemplate x:Key="regionListItemTemplate">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding Path=region_visibility}" />
+                <TextBlock Text="{Binding Path=region_name}" Margin="5,0,0,0"/>
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="regionDetailsTemplate">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Path=region_name}" />
-                <ComboBox ItemsSource="{Binding Source={StaticResource regionShapes}}"
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="name" Margin="6,0" />
+                    <TextBox Text="{Binding Path=region_name, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="type" Margin="6,0" />
+                    <ComboBox ItemsSource="{Binding Source={StaticResource regionShapes}}"
                           SelectedValue="{Binding Path=region_type}"
                           IsSynchronizedWithCurrentItem="true" />
-                <Slider Name="x_scale_slider"
-                        Orientation="Horizontal"
-                        Width="60"
-                        RenderTransform="1.0,0,0,0.5,0,4"
-                        Minimum="0" 
-                        Maximum="10" 
-                        Value="{Binding Path=region_box_spec.x_scale}" 
-                    />
+                </StackPanel>
+                <Grid HorizontalAlignment="Center" Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="70" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="translation" Grid.Column="1" Grid.Row="0" />
+                    <TextBlock Text="scale" Grid.Column="2" Grid.Row="0" />
+                    <TextBlock Text="X :" Grid.Column="0" Grid.Row="1" />
+                    <Slider Name="x_trans_slider"
+                            Grid.Column="1" Grid.Row="1"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="-5" 
+                            Maximum="5"
+                            Value="{Binding Path=region_box_spec.x_trans}" 
+                        />
+                    <Slider Name="x_scale_slider"
+                            Grid.Column="2" Grid.Row="1"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="0" 
+                            Maximum="20"
+                            Value="{Binding Path=region_box_spec.x_scale}" 
+                        />
+                    <TextBlock Text="Y :" Grid.Column="0" Grid.Row="2" />
+                    <Slider Name="y_trans_slider"
+                            Grid.Column="1" Grid.Row="2"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="-5" 
+                            Maximum="5"
+                            Value="{Binding Path=region_box_spec.y_trans}" 
+                        />
+                    <Slider Name="y_scale_slider"
+                            Grid.Column="2" Grid.Row="2"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="0" 
+                            Maximum="20"
+                            Value="{Binding Path=region_box_spec.y_scale}" 
+                        />
+                    <TextBlock Text="Z :" Grid.Column="0" Grid.Row="3" />
+                    <Slider Name="z_trans_slider"
+                            Grid.Column="1" Grid.Row="3"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="-5" 
+                            Maximum="5"
+                            Value="{Binding Path=region_box_spec.z_trans}" 
+                        />
+                    <Slider Name="z_scale_slider"
+                            Grid.Column="2" Grid.Row="3"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="0" 
+                            Maximum="20"
+                            Value="{Binding Path=region_box_spec.z_scale}" 
+                        />
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- CELLS -->
+        <DataTemplate x:Key="cellListItemTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Path=cell_name}"/>
             </StackPanel>
         </DataTemplate>
 
@@ -37,29 +129,148 @@
                     <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <DockPanel Grid.Column="0" HorizontalAlignment="Right">
-                    <TextBlock Text="number" Margin="6,0" />
-                </DockPanel>
-                <DockPanel Grid.Column="1" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="name" Margin="6,0"
+                           Grid.Column="0" Grid.Row="0"  
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           />
+                <TextBox Text="{Binding Path=cell_name, UpdateSourceTrigger=PropertyChanged}"
+                         Grid.Column="1" Grid.Row="0"
+                         />
+                <TextBlock Text="type" Margin="6,0"
+                           Grid.Column="0" Grid.Row="1"  
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           />
+                <ComboBox Name="cell_type_cbox"
+                            Grid.Column="1" Grid.Row="1" 
+                            MinWidth="80"
+                            ItemsSource="{Binding Source={StaticResource cellTypesListView}}" 
+                            DisplayMemberPath="cell_type_name"
+                            SelectedValue="{Binding Path=cell_type_ref}"
+                            SelectedValuePath="cell_type_name"
+                            />
+                <TextBlock Text="number" Margin="6,0"
+                           Grid.Column="0" Grid.Row="2"  
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           />
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="1" Grid.Row="2">
                     <Slider Name="number_slider"
-                        Orientation="Horizontal"
-                        Width="60"
-                        RenderTransform="1.0,0,0,0.5,0,4"
-                        Minimum="1" 
-                        Maximum="1000" 
-                        Value="{Binding Path=number}" 
-                        IsSnapToTickEnabled="True" 
-                        TickFrequency="1" 
-                    />
-                    <TextBlock Name="NumberReadout" Text="{Binding ElementName=number_slider, Path=Value}" />
-                </DockPanel>
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="1" 
+                            Maximum="1000" 
+                            Value="{Binding Path=number}" 
+                            IsSnapToTickEnabled="True" 
+                            TickFrequency="1" 
+                            />
+                    <TextBlock Name="NumberReadout" 
+                               Text="{Binding ElementName=number_slider, Path=Value}" 
+                               VerticalAlignment="Center"
+                               />
+                </StackPanel>
             </Grid>
         </DataTemplate>
 
-        <CollectionViewSource x:Key="regionsListView" />
-        <CollectionViewSource x:Key="cellsListView" />
+        <!-- SOLFACS -->
+        <ObjectDataProvider x:Key="solfacDistributionTypes"
+                    MethodName="GetValues" 
+                    ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="c:SolfacDistributionType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <DataTemplate x:Key="solfacListItemTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Path=solfac_name}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type c:SolfacHomogeneousLevel}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Path=concentration}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type c:SolfacLinearGradient}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Path=min_concentration}"/>
+                <TextBlock Text="{Binding Path=max_concentration}" Margin="6,0"/>
+                <TextBlock Text="{Binding Path=x_direction}" Margin="6,0"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type c:SolfacGaussianGradient}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Path=peak_concentration}"/>
+                <ComboBox Name="gaussian_gradients_cbox"
+                            Grid.Column="1" Grid.Row="0" 
+                            MinWidth="80"
+                            ItemsSource="{Binding Source={StaticResource gaussianGradientsListView}}" 
+                            DisplayMemberPath="gaussian_spec_name"
+                            SelectedValue="{Binding Path=gaussian_spec_name_ref}"
+                            SelectedValuePath="gaussian_spec_name"
+                            />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="solfacDetailsTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="name" Margin="6,0"
+                           Grid.Column="0" Grid.Row="0"  
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           />
+                <TextBox Text="{Binding Path=solfac_name, UpdateSourceTrigger=PropertyChanged}"
+                         Grid.Column="1" Grid.Row="0"
+                         />
+                <TextBlock Text="type" Margin="6,0" 
+                           Grid.Column="0" Grid.Row="1" 
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <ComboBox Name="solfac_type_cbox"
+                            Grid.Column="1" Grid.Row="1" 
+                            MinWidth="80"
+                            ItemsSource="{Binding Source={StaticResource solfacTypesListView}}" 
+                            DisplayMemberPath="solfac_type_name"
+                            SelectedValue="{Binding Path=solfac_type_ref}"
+                            SelectedValuePath="solfac_type_name"
+                            />
+                <TextBlock Text="dist" Margin="6,0" 
+                           Grid.Column="0" Grid.Row="2" 
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <!-- TODO: Need to tie a change in this to changing this solfac distribution... -->
+                <ComboBox Grid.Column="1" Grid.Row="2"
+                          ItemsSource="{Binding Source={StaticResource solfacDistributionTypes}}"
+                          SelectedValue="{Binding Path=solfac_distribution.solfac_distribution_type}"
+                          IsSynchronizedWithCurrentItem="true" 
+                          MinWidth="120"
+                          />
+                <ContentControl Name="solfac_dist_cc"
+                                Grid.ColumnSpan="2" Grid.Row="3"
+                                Content="{Binding Path=solfac_distribution}"
+                                />
+            </Grid>
+        </DataTemplate>
+
     </Window.Resources>
     
+    <!-- MAIN GUI -->
     <Grid Name="ConfigGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -71,6 +282,7 @@
             <TextBlock Text="Regions" Margin="0,5,0,0" />
             <ListBox Name="RegionsListBox" Width="200" MinHeight="50" 
                      ItemsSource="{Binding Source={StaticResource regionsListView}}"
+                     ItemTemplate="{Binding Source={StaticResource regionListItemTemplate}}"
                      GotFocus="RegionsListBox_GotFocus"
                      SelectionChanged="RegionsListBox_SelectionChanged"
                      />
@@ -87,6 +299,7 @@
             <TextBlock Text="Cells" Margin="0,5,0,0" />
             <ListBox Name="CellsListBox" Width="200" MinHeight="50" 
                      ItemsSource="{Binding Source={StaticResource cellsListView}}" 
+                     ItemTemplate="{Binding Source={StaticResource cellListItemTemplate}}"
                      />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click" IsEnabled="False"/>
@@ -97,18 +310,33 @@
                             ContentTemplate="{StaticResource cellDetailsTemplate}" 
                             Margin="8"/>
             
+            <!-- Solfacs -->
+            <TextBlock Text="Solfacs" Margin="0,5,0,0" />
+            <ListBox Name="SolfacsListBox" Width="200" MinHeight="50" 
+                         ItemsSource="{Binding Source={StaticResource solfacsListView}}" 
+                         ItemTemplate="{Binding Source={StaticResource solfacListItemTemplate}}"
+                         />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Name="AddSolfacButton"  Width="50" Content="Add" Click="AddSolfacButton_Click" IsEnabled="False"/>
+                <Button Name="RemoveSolfacButton" Width="50" Content="Remove" Click="RemoveSolfacButton_Click" IsEnabled="False"/>
+            </StackPanel>
+            <ContentControl Name="SolfacDetails"
+                            Content="{Binding Source={StaticResource solfacsListView}}" 
+                            ContentTemplate="{StaticResource solfacDetailsTemplate}" 
+                            Margin="8"/>
+
+            <!-- Serialize button -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
                 <Button Name="SerializeButton" Width="80" 
-                    Content="Serialize" 
-                    VerticalAlignment="Bottom" 
-                    HorizontalAlignment="Right"
-                    Margin="0,5"
-                    Click="SerializeButton_Click" />
+                        Content="Serialize" 
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Right"
+                        Margin="0,5"
+                        Click="SerializeButton_Click" />
             </StackPanel>
         </StackPanel>
-        
+
         <!-- VTK render window -->
-        <WindowsFormsHost Grid.Column="1" MinHeight="100" Name="windowsFormsHost"
-                          LostFocus="RegionsListBox_LostFocus"/>
+        <WindowsFormsHost Grid.Column="1" MinHeight="100" Name="windowsFormsHost" />
     </Grid>
 </Window>

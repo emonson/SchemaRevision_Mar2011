@@ -229,7 +229,7 @@ namespace SerializationTest1
 
     public class SolfacType
     {
-        public string solfac_type_name;
+        public string solfac_type_name { get; set; }
 
         public SolfacType()
         {
@@ -243,7 +243,7 @@ namespace SerializationTest1
     [XmlInclude(typeof(SolfacHomogeneousLevel)),
      XmlInclude(typeof(SolfacLinearGradient)),
      XmlInclude(typeof(SolfacGaussianGradient))]
-    public abstract class SolfacDistribution
+    public abstract class SolfacDistribution : EntityModelBase
     {
         // NOTE: This is a little dangerous since someone may change the Type label,
         // but the deserialization doesn't work if the "set" method is marked protected...
@@ -270,6 +270,17 @@ namespace SerializationTest1
         public double[] gradient_direction { get; set; }
         public double min_concentration { get; set; }
         public double max_concentration { get; set; }
+        public double x_direction
+        {
+            get { return gradient_direction[0]; }
+            set
+            {
+                if (value != gradient_direction[0])
+                {
+                    gradient_direction[0] = value;
+                }
+            }
+        }
 
         public SolfacLinearGradient()
         {
@@ -326,6 +337,67 @@ namespace SerializationTest1
                 }
             }
         }
+        public double y_scale
+        {
+            get { return transform_matrix[1][1]; }
+            set
+            {
+                if (value != transform_matrix[1][1])
+                {
+                    transform_matrix[1][1] = value;
+                    base.OnPropertyChanged("y_scale");
+                }
+            }
+        }
+        public double z_scale
+        {
+            get { return transform_matrix[2][2]; }
+            set
+            {
+                if (value != transform_matrix[2][2])
+                {
+                    transform_matrix[2][2] = value;
+                    base.OnPropertyChanged("z_scale");
+                }
+            }
+        }
+
+        public double x_trans
+        {
+            get { return transform_matrix[0][3]; }
+            set
+            {
+                if (value != transform_matrix[0][3])
+                {
+                    transform_matrix[0][3] = value;
+                    base.OnPropertyChanged("x_trans");
+                }
+            }
+        }
+        public double y_trans
+        {
+            get { return transform_matrix[1][3]; }
+            set
+            {
+                if (value != transform_matrix[1][3])
+                {
+                    transform_matrix[1][3] = value;
+                    base.OnPropertyChanged("y_trans");
+                }
+            }
+        }
+        public double z_trans
+        {
+            get { return transform_matrix[2][3]; }
+            set
+            {
+                if (value != transform_matrix[2][3])
+                {
+                    transform_matrix[2][3] = value;
+                    base.OnPropertyChanged("z_trans");
+                }
+            }
+        }
 
         public BoxSpecification()
         {
@@ -343,8 +415,20 @@ namespace SerializationTest1
             {
                 transform_matrix[ii][jj] = value;
                 base.OnPropertyChanged("transform_matrix");
+
                 if (ii == 0 && jj == 0)
                     base.OnPropertyChanged("x_scale");
+                if (ii == 1 && jj == 1)
+                    base.OnPropertyChanged("y_scale");
+                if (ii == 2 && jj == 2)
+                    base.OnPropertyChanged("z_scale");
+
+                if (ii == 0 && jj == 3)
+                    base.OnPropertyChanged("x_trans");
+                if (ii == 1 && jj == 3)
+                    base.OnPropertyChanged("y_trans");
+                if (ii == 2 && jj == 3)
+                    base.OnPropertyChanged("z_trans");
             }
         }
     }

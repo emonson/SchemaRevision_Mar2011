@@ -32,19 +32,19 @@ namespace SerializationTest1
         private vtkBoxRepresentation boxRep;
         private vtkBoxWidget2 boxWidget;
         private Simulation sim;
+        private int region_list_selected_idx = 0;
 
         public MainWindow()
         {
             InitializeComponent();
 
             // NOTE: Uncomment this to recreate initial XML scenario file
-            this.CreateAndSerializeScenario();
+            // this.CreateAndSerializeScenario();
 
             configurator = new SimConfigurator(filename);
             configurator.DeserializeSimConfig();
-
-            // DEBUG: Bad hard-coded test...
-            configurator.SimConfig.scenario.regions[0].region_box_spec.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(SimConfig_PropertyChanged);
+            // TODO: Should make sure region 0 is always selected first...
+            configurator.SimConfig.scenario.regions[region_list_selected_idx].region_box_spec.PropertyChanged += this.SimConfig_PropertyChanged;
 
             sim = new Simulation(configurator);
 
@@ -61,6 +61,28 @@ namespace SerializationTest1
             {
                 ldv.Source = configurator.SimConfig.scenario.cellsets;
             }
+            ldv = this.Resources["solfacsListView"] as CollectionViewSource;
+            if (ldv != null)
+            {
+                ldv.Source = configurator.SimConfig.scenario.solfacs;
+            }
+            ldv = this.Resources["solfacTypesListView"] as CollectionViewSource;
+            if (ldv != null)
+            {
+                ldv.Source = configurator.SimConfig.entity_repository.solfac_types;
+            }
+            ldv = this.Resources["cellTypesListView"] as CollectionViewSource;
+            if (ldv != null)
+            {
+                ldv.Source = configurator.SimConfig.entity_repository.cell_types;
+            }
+
+            ldv = this.Resources["gaussianGradientsListView"] as CollectionViewSource;
+            if (ldv != null)
+            {
+                ldv.Source = configurator.SimConfig.entity_repository.gaussian_gradients;
+            }
+
 
         }
 
@@ -118,12 +140,23 @@ namespace SerializationTest1
 
             // Solfacs
             Solfac solfac = new Solfac();
+            solfac.solfac_name = "Gauss";
             solfac.solfac_type_ref = sim_config.entity_repository.solfac_types[0].solfac_type_name;
             SolfacGaussianGradient sgg = new SolfacGaussianGradient();
             sgg.gaussian_spec_name_ref = sim_config.entity_repository.gaussian_gradients[0].gaussian_spec_name;
             solfac.solfac_distribution = sgg;
             sim_config.scenario.solfacs.Add(solfac);
             solfac = new Solfac();
+            solfac.solfac_name = "Lin";
+            SolfacLinearGradient sll = new SolfacLinearGradient();
+            sll.min_concentration = 20;
+            sll.max_concentration = 150;
+            solfac.solfac_distribution = sll;
+            solfac.solfac_type_ref = sim_config.entity_repository.solfac_types[1].solfac_type_name;
+            solfac.solfac_is_time_varying = false;
+            sim_config.scenario.solfacs.Add(solfac);
+            solfac = new Solfac();
+            solfac.solfac_name = "Homog";
             solfac.solfac_type_ref = sim_config.entity_repository.solfac_types[1].solfac_type_name;
             solfac.solfac_is_time_varying = true;
             solfac.solfac_amplitude_keyframes.Add(new TimeAmpPair(0, 1));
@@ -228,6 +261,7 @@ namespace SerializationTest1
             {
                 for (int jj = 0; jj < 4; ++jj)
                 {
+                    // Using elements Set method for property change notification
                     box_spec.SetMatrixElement(ii,jj,vtk_matrix.GetElement(ii, jj));
                 }
             }
@@ -271,6 +305,11 @@ namespace SerializationTest1
         {
             vtkTransform vtk_transform = vtkTransform.New();
             int reg_idx = RegionsListBox.SelectedIndex;
+
+            configurator.SimConfig.scenario.regions[region_list_selected_idx].region_box_spec.PropertyChanged -= this.SimConfig_PropertyChanged;
+            configurator.SimConfig.scenario.regions[reg_idx].region_box_spec.PropertyChanged += this.SimConfig_PropertyChanged;
+            this.region_list_selected_idx = reg_idx;
+
             this.TransferMatrixToVTKTransform(this.configurator.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
             boxRep.SetTransform(vtk_transform);
             sphereActorList[reg_idx].SetUserTransform(vtk_transform);
@@ -326,7 +365,23 @@ namespace SerializationTest1
 
         void SimConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.rwc.Invalidate();
+            vtkTransform vtk_transform = vtkTransform.New();
+            int reg_idx = RegionsListBox.SelectedIndex;
+            this.TransferMatrixToVTKTransform(this.configurator.SimConfig.scenario.regions[reg_idx].region_box_spec.transform_matrix, vtk_transform);
+            boxRep.SetTransform(vtk_transform);
+            sphereActorList[reg_idx].SetUserTransform(vtk_transform);
+            // sphereActor.SetVisibility(1);
+            rwc.Invalidate();
+        }
+
+        private void AddSolfacButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RemoveSolfacButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
