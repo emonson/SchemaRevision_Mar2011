@@ -281,12 +281,12 @@ namespace SerializationTest1
             }
         }
 
-        private void AddButton_Click(object sender, RoutedEventArgs e)
+        private void AddRegionButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveRegionButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
@@ -297,6 +297,16 @@ namespace SerializationTest1
         }
 
         private void RemoveCellButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddSolfacButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RemoveSolfacButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
@@ -374,14 +384,25 @@ namespace SerializationTest1
             rwc.Invalidate();
         }
 
-        private void AddSolfacButton_Click(object sender, RoutedEventArgs e)
+        private void AddCellTypeButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void RemoveSolfacButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveCellTypeButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
+
+        private void AddSolfacTypeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RemoveSolfacTypeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }
