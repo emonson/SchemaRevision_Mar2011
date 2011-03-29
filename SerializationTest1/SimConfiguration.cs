@@ -167,14 +167,15 @@ namespace SerializationTest1
         }
     }
 
+    public enum RelativePosition { Inside, Surface, Outside }
+    
     public class CellSet
     {
-        public enum RelativePosition { Inside, Surface, Outside }
-
         public string cell_name { get; set; }
         public string cell_type_ref { get; set; }
         public int number { get; set; }
         // TODO: Need to abstract out positioning to include pos specification for single cell...
+        public bool cells_constrained_to_region { get; set; }
         public string region_name_ref { get; set; }
         public RelativePosition wrt_region { get; set; }
         public System.Windows.Media.Color cell_color { get; set; }
@@ -184,6 +185,7 @@ namespace SerializationTest1
             cell_name = "Default Cell";
             cell_type_ref = "MotileCell";
             number = 100;
+            cells_constrained_to_region = false;
             region_name_ref = "Default Region";
             wrt_region = RelativePosition.Inside;
             cell_color = new System.Windows.Media.Color();

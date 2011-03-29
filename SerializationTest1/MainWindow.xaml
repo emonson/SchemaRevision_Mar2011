@@ -4,7 +4,7 @@
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:c="clr-namespace:SerializationTest1"
-        Title="MainWindow" Height="800" Width="550">
+        Title="MainWindow" Height="700" Width="750">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -17,73 +17,72 @@
     <!-- MAIN GUI -->
     <Grid Name="ConfigGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition MinWidth="280" Width="Auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         
-        <TabControl Grid.Column="0" >
+        <TabControl Grid.Column="0" TabStripPlacement="Bottom">
             
             <!-- SIM SETUP -->
             <TabItem Header="Sim Setup">
-                <StackPanel Orientation="Vertical" Margin="8">
-            
-                    <!-- Regions -->
-                    <TextBlock Text="Regions" Margin="0,5,0,0" />
-                    <ListBox Name="RegionsListBox" Width="200" MinHeight="50" 
+                <ScrollViewer Grid.Row="0" 
+                              Margin="0,0,0,16"
+                              VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical" Margin="8">
+
+                        <!-- Regions -->
+                        <TextBlock Text="Regions" FontWeight="Bold" Margin="0,5,0,0" />
+                        <ListBox Name="RegionsListBox" MinHeight="50" 
                              ItemsSource="{Binding Source={StaticResource regionsListView}}"
                              ItemTemplate="{Binding Source={StaticResource regionListItemTemplate}}"
                              GotFocus="RegionsListBox_GotFocus"
                              SelectionChanged="RegionsListBox_SelectionChanged"
                              />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Name="AddRegionButton"  Width="50" Content="Add" Click="AddRegionButton_Click" IsEnabled="False"/>
-                        <Button Name="RemoveRegionButton" Width="50" Content="Remove" Click="RemoveRegionButton_Click" IsEnabled="False"/>
-                    </StackPanel>
-                    <ContentControl Name="RegionDetails"
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Name="AddRegionButton"  Width="50" Content="Add" Click="AddRegionButton_Click" IsEnabled="False"/>
+                            <Button Name="RemoveRegionButton" Width="50" Content="Remove" Click="RemoveRegionButton_Click" IsEnabled="False"/>
+                        </StackPanel>
+                        <ContentControl Name="RegionDetails"
                                     Content="{Binding Source={StaticResource regionsListView}}" 
                                     ContentTemplate="{StaticResource regionDetailsTemplate}" 
                                     Margin="8"/>
 
-                    <!-- Cells -->
-                    <TextBlock Text="Cells" Margin="0,5,0,0" />
-                    <ListBox Name="CellsListBox" Width="200" MinHeight="50" 
+                        <!-- Cells -->
+                        <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                      Stretch="Fill" X1="0" X2="10" />
+                        <TextBlock Text="Cells" FontWeight="Bold" Margin="0,5,0,0" />
+                        <ListBox Name="CellsListBox" MinHeight="50" 
                              ItemsSource="{Binding Source={StaticResource cellsListView}}" 
                              ItemTemplate="{Binding Source={StaticResource cellListItemTemplate}}"
                              />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click" IsEnabled="False"/>
-                        <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" IsEnabled="False"/>
-                    </StackPanel>
-                    <ContentControl Name="CellDetails"
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click" IsEnabled="False"/>
+                            <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" IsEnabled="False"/>
+                        </StackPanel>
+                        <ContentControl Name="CellDetails"
                                     Content="{Binding Source={StaticResource cellsListView}}" 
                                     ContentTemplate="{StaticResource cellDetailsTemplate}" 
                                     Margin="8"/>
-            
-                    <!-- Solfacs -->
-                    <TextBlock Text="Solfacs" Margin="0,5,0,0" />
-                    <ListBox Name="SolfacsListBox" Width="200" MinHeight="50" 
+
+                        <!-- Solfacs -->
+                        <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                      Stretch="Fill" X1="0" X2="10" />
+                        <TextBlock Text="Solfacs" FontWeight="Bold" Margin="0,5,0,0" />
+                        <ListBox Name="SolfacsListBox" MinHeight="50" 
                                  ItemsSource="{Binding Source={StaticResource solfacsListView}}" 
                                  ItemTemplate="{Binding Source={StaticResource solfacListItemTemplate}}"
                                  />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Name="AddSolfacButton"  Width="50" Content="Add" Click="AddSolfacButton_Click" IsEnabled="False"/>
-                        <Button Name="RemoveSolfacButton" Width="50" Content="Remove" Click="RemoveSolfacButton_Click" IsEnabled="False"/>
-                    </StackPanel>
-                    <ContentControl Name="SolfacDetails"
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Name="AddSolfacButton"  Width="50" Content="Add" Click="AddSolfacButton_Click" IsEnabled="False"/>
+                            <Button Name="RemoveSolfacButton" Width="50" Content="Remove" Click="RemoveSolfacButton_Click" IsEnabled="False"/>
+                        </StackPanel>
+                        <ContentControl Name="SolfacDetails"
                                     Content="{Binding Source={StaticResource solfacsListView}}" 
                                     ContentTemplate="{StaticResource solfacDetailsTemplate}" 
                                     Margin="8"/>
 
-                    <!-- Serialize button -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-                        <Button Name="SerializeButton" Width="80" 
-                                Content="Serialize" 
-                                VerticalAlignment="Bottom" 
-                                HorizontalAlignment="Right"
-                                Margin="0,5"
-                                Click="SerializeButton_Click" />
                     </StackPanel>
-                </StackPanel>
+                </ScrollViewer>
             </TabItem>
             
             <!-- ENTITY REPOSITORY -->
@@ -91,8 +90,8 @@
                 <StackPanel Orientation="Vertical" Margin="8">
 
                     <!-- Cell Types -->
-                    <TextBlock Text="Cell Types" Margin="0,5,0,0" />
-                    <ListBox Name="CellTypesListBox" Width="200" MinHeight="50" 
+                    <TextBlock Text="Cell Types" FontWeight="Bold" Margin="0,5,0,0" />
+                    <ListBox Name="CellTypesListBox" MinHeight="50" 
                              ItemsSource="{Binding Source={StaticResource cellTypesListView}}" 
                              ItemTemplate="{Binding Source={StaticResource cellTypeListItemTemplate}}"
                              />
@@ -106,8 +105,10 @@
                                     Margin="8"/>
 
                     <!-- Solfac Types -->
-                    <TextBlock Text="Solfac Types" Margin="0,5,0,0" />
-                    <ListBox Name="SolfacTypesListBox" Width="200" MinHeight="50" 
+                    <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                      Stretch="Fill" X1="0" X2="10" />
+                    <TextBlock Text="Solfac Types" FontWeight="Bold" Margin="0,5,0,0" />
+                    <ListBox Name="SolfacTypesListBox" MinHeight="50" 
                                  ItemsSource="{Binding Source={StaticResource solfacTypesListView}}" 
                                  ItemTemplate="{Binding Source={StaticResource solfacTypeListItemTemplate}}"
                                  />
@@ -121,10 +122,30 @@
                                     Margin="8"/>
                 </StackPanel>
             </TabItem>
-            
+
+            <!-- GLOBAL PARAMETERS -->
+            <TabItem Header="Params">
+                <StackPanel Orientation="Vertical" Margin="8">
+
+                    <!-- Force Parameters -->
+                    <TextBlock Text="Force Parameters" FontWeight="Bold" Margin="0,5,0,0" />
+                </StackPanel>
+            </TabItem>
         </TabControl>
-        
-        <!-- VTK render window -->
-        <WindowsFormsHost Grid.Column="1" MinHeight="100" Name="windowsFormsHost" />
+
+        <DockPanel Grid.Column="1" >
+            <!-- Serialize button -->
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                <Button Name="SerializeButton" Width="80" 
+                                    Content="Serialize" 
+                                    VerticalAlignment="Bottom" 
+                                    HorizontalAlignment="Right"
+                                    Margin="0,5"
+                                    Click="SerializeButton_Click" />
+            </StackPanel>
+            
+            <!-- VTK render window -->
+            <WindowsFormsHost MinHeight="100" Name="windowsFormsHost" />
+        </DockPanel>
     </Grid>
 </Window>

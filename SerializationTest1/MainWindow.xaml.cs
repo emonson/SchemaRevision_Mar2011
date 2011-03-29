@@ -39,7 +39,7 @@ namespace SerializationTest1
             InitializeComponent();
 
             // NOTE: Uncomment this to recreate initial XML scenario file
-            // this.CreateAndSerializeScenario();
+            this.CreateAndSerializeScenario();
 
             configurator = new SimConfigurator(filename);
             configurator.DeserializeSimConfig();
@@ -127,15 +127,17 @@ namespace SerializationTest1
             cs.cell_name = "Generic motile bcell";
             cs.cell_type_ref = sim_config.entity_repository.cell_types[0].cell_type_name;
             cs.number = 200;
+            cs.cells_constrained_to_region = true;
             cs.region_name_ref = sim_config.scenario.regions[0].region_name;
-            cs.wrt_region = CellSet.RelativePosition.Inside;
+            cs.wrt_region = RelativePosition.Inside;
             sim_config.scenario.cellsets.Add(cs);
             cs = new CellSet();
             cs.cell_name = "Generic motile tcell";
             cs.cell_type_ref = sim_config.entity_repository.cell_types[1].cell_type_name;
             cs.number = 200;
+            cs.cells_constrained_to_region = true;
             cs.region_name_ref = sim_config.scenario.regions[1].region_name;
-            cs.wrt_region = CellSet.RelativePosition.Outside;
+            cs.wrt_region = RelativePosition.Outside;
             sim_config.scenario.cellsets.Add(cs);
 
             // Solfacs

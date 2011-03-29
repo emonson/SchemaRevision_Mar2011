@@ -137,6 +137,8 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <TextBlock Text="name" Margin="6,0"
                            Grid.Column="0" Grid.Row="0"  
@@ -179,6 +181,25 @@
                                VerticalAlignment="Center"
                                />
             </StackPanel>
+            <CheckBox Name="constrain_to_region_checkbox"
+                      Content="Constrain to region"
+                      Grid.ColumnSpan="2" Grid.Row="3"
+                      IsChecked="{Binding Path=cells_constrained_to_region}"
+                      />
+            <TextBlock Text="region" Margin="6,0"
+                       Grid.Column="0" Grid.Row="4"  
+                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                       IsEnabled="{Binding ElementName=constrain_to_region_checkbox, Path=IsChecked}"
+                       />
+            <ComboBox Name="cell_region_cbox"
+                      Grid.Column="1" Grid.Row="4" 
+                      IsEnabled="{Binding ElementName=constrain_to_region_checkbox, Path=IsChecked}"
+                      MinWidth="80"
+                      ItemsSource="{Binding Source={StaticResource regionsListView}}" 
+                      DisplayMemberPath="region_name"
+                      SelectedValue="{Binding Path=region_name_ref}"
+                      SelectedValuePath="region_name"
+                      />
         </Grid>
     </DataTemplate>
 
