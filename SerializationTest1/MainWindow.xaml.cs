@@ -39,12 +39,15 @@ namespace SerializationTest1
             InitializeComponent();
 
             // NOTE: Uncomment this to recreate initial XML scenario file
-            this.CreateAndSerializeScenario();
+            // this.CreateAndSerializeScenario();
 
             configurator = new SimConfigurator(filename);
             configurator.DeserializeSimConfig();
             // TODO: Should make sure region 0 is always selected first...
             configurator.SimConfig.scenario.regions[region_list_selected_idx].region_box_spec.PropertyChanged += this.SimConfig_PropertyChanged;
+
+            // Set the data context for the main tab control config GUI
+            this.ConfigTabControl.DataContext = configurator.SimConfig;
 
             sim = new Simulation(configurator);
 
@@ -76,14 +79,17 @@ namespace SerializationTest1
             {
                 ldv.Source = configurator.SimConfig.entity_repository.cell_types;
             }
-
             ldv = this.Resources["gaussianGradientsListView"] as CollectionViewSource;
             if (ldv != null)
             {
                 ldv.Source = configurator.SimConfig.entity_repository.gaussian_gradients;
             }
-
-
+            ldv = this.Resources["globalParameterTypesListView"] as CollectionViewSource;
+            if (ldv != null)
+            {
+                ldv.Source = configurator.SimConfig.global_parameters;
+            }
+            
         }
 
         public void CreateAndSerializeScenario()
@@ -95,6 +101,9 @@ namespace SerializationTest1
             sim_config.experiment_name = "Test experiment for XML serialization";
             sim_config.scenario.time_config.duration = 100;
             sim_config.scenario.time_config.timestep = 3;
+
+            // Global Paramters
+            sim_config.LoadDefaultGlobalParameters();
 
             // Entity Repository
             EntityRepository repository = new EntityRepository();
@@ -108,9 +117,11 @@ namespace SerializationTest1
             // Possible cell types
             CellType ct = new CellType();
             ct.cell_type_name = "bcell";
+            ct.LoadDefaultMotileCellParams();
             repository.cell_types.Add(ct);
             ct = new CellType();
             ct.cell_type_name = "tcell";
+            ct.LoadDefaultMotileCellParams();
             repository.cell_types.Add(ct);
             sim_config.entity_repository = repository;
             // Gaussian Gradients
@@ -402,6 +413,16 @@ namespace SerializationTest1
         }
 
         private void RemoveSolfacTypeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddGaussGradientButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RemoveGaussGradientButton_Click(object sender, RoutedEventArgs e)
         {
 
         }

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows.Data;
 using System.Xml.Serialization;
 
 namespace SerializationTest1
@@ -51,7 +52,7 @@ namespace SerializationTest1
         public string experiment_name { get; set; }
         public string description { get; set; }
         public Scenario scenario { get; set; }
-        public GlobalParameters global_parameters { get; set; }
+        public ObservableCollection<GlobalParameters> global_parameters { get; set; }
         public EntityRepository entity_repository { get; set; }
 
         public SimConfiguration()
@@ -59,8 +60,16 @@ namespace SerializationTest1
             experiment_name = "Experiment1";
             description = "Whole sim config description";
             scenario = new Scenario();
-            global_parameters = new GlobalParameters();
+            global_parameters = new ObservableCollection<GlobalParameters>();
             entity_repository = new EntityRepository();
+        }
+
+        public void LoadDefaultGlobalParameters()
+        {
+            var force_params = new ForceParams();
+            global_parameters.Add(force_params);
+            var junk_params = new JunkParams();
+            global_parameters.Add(junk_params);
         }
     }
 
@@ -81,18 +90,6 @@ namespace SerializationTest1
             regions = new ObservableCollection<Region>();
             solfacs = new ObservableCollection<Solfac>();
             cellsets = new ObservableCollection<CellSet>();
-        }
-    }
-
-    public class GlobalParameters
-    {
-        public string description { get; set; }
-        public ForceParams force_params { get; set; }
-
-        public GlobalParameters()
-        {
-            description = "Default parameters description";
-            force_params = new ForceParams();
         }
     }
 
@@ -196,12 +193,23 @@ namespace SerializationTest1
     public class CellType
     {
         public string cell_type_name { get; set; }
-        public MotileCellParams cell_type_parameters { get; set; }
+        public ObservableCollection<MotileCellParams> cell_type_parameters { get; set; }
 
         public CellType()
         {
             cell_type_name = "Default cell type name";
-            cell_type_parameters = new MotileCellParams();
+            cell_type_parameters = new ObservableCollection<MotileCellParams>();
+        }
+
+        public void LoadDefaultMotileCellParams()
+        {
+            var loco = new LocomotorParams();
+            var ckr = new CkReceptorParams();
+            var ckri = new CkReceptorInitParams();
+
+            cell_type_parameters.Add(loco);
+            cell_type_parameters.Add(ckr);
+            cell_type_parameters.Add(ckri);
         }
     }
 
@@ -247,9 +255,8 @@ namespace SerializationTest1
      XmlInclude(typeof(SolfacGaussianGradient))]
     public abstract class SolfacDistribution : EntityModelBase
     {
-        // NOTE: This is a little dangerous since someone may change the Type label,
-        // but the deserialization doesn't work if the "set" method is marked protected...
-        public SolfacDistributionType solfac_distribution_type { get; set; }
+        [XmlIgnore]
+        public SolfacDistributionType solfac_distribution_type { get; protected set; }
 
         public SolfacDistribution()
         {
@@ -478,7 +485,49 @@ namespace SerializationTest1
 
 
     // SIM PARAMETERS CLASSES ================================
-    public class ForceParams
+
+    public enum GlobalParameterType { ForceParams, JunkParams }
+
+    /// <summary>
+    /// Converter to go between enum values and "human readable" strings for GUI
+    /// </summary>
+    public class GlobalParamTypeToStringConverter : IValueConverter
+    {
+        // NOTE: This method is a bit fragile since the list of strings needs to 
+        // correspond in length and index with the GlobalParameterType enum...
+        private List<string> _global_param_type_strings = new List<string>()
+	                            {
+	                                "Force Parameters",
+                                    "Junk Params"
+	                            };
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return _global_param_type_strings[(int)value];
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string str = (string)value;
+            int idx = _global_param_type_strings.FindIndex(item => item == str);
+            return (GlobalParameterType)Enum.ToObject(typeof(GlobalParameterType), (int)idx);
+        }
+    }
+
+    // Base class for any global parameter types
+    [XmlInclude(typeof(ForceParams)),
+     XmlInclude(typeof(JunkParams))]
+    public class GlobalParameters
+    {
+        [XmlIgnore]
+        public GlobalParameterType global_parameter_type { get; protected set; }
+
+        public GlobalParameters()
+        {
+        }
+    }
+
+    public class ForceParams : GlobalParameters
     {
         public double force_delta { get; set; }
         public double force_phi1 { get; set; }
@@ -486,27 +535,74 @@ namespace SerializationTest1
 
         public ForceParams()
         {
+            global_parameter_type = GlobalParameterType.ForceParams;
+
             force_delta = 12.5;
             force_phi1 = 1.0;
             force_phi2 = 1.0;
         }
     }
 
-    public class MotileCellParams
+    public class JunkParams : GlobalParameters
     {
-        public LocomotorParams mc_locomotor { get; set; }
-        public CkReceptorParams mc_ck_receptor { get; set; }
-        public CkReceptorInitParams mc_ck_receptor_init { get; set; }
+        public double junk_1 { get; set; }
+        public int junk_2 { get; set; }
+        public string junk_3 { get; set; }
 
-        public MotileCellParams()
+        public JunkParams()
         {
-            mc_locomotor = new LocomotorParams();
-            mc_ck_receptor = new CkReceptorParams();
-            mc_ck_receptor_init = new CkReceptorInitParams();
+            global_parameter_type = GlobalParameterType.JunkParams;
+
+            junk_1 = -12.5;
+            junk_2 = 100;
+            junk_3 = "sample string";
         }
     }
 
-    public class LocomotorParams
+    public enum MotileCellParameterType { Locomotor, CkReceptor, CkReceptorInit }
+
+    /// <summary>
+    /// Converter to go between enum values and "human readable" strings for GUI
+    /// </summary>
+    public class MotileCellParamTypeToStringConverter : IValueConverter
+    {
+        // NOTE: This method is a bit fragile since the list of strings needs to 
+        // correspond in length and index with the MotileCellParameterType enum...
+        private List<string> _cell_param_type_strings = new List<string>()
+	                            {
+	                                "Locomotor params",
+	                                "CK Receptor Params",
+	                                "CK Receptor Init Params"
+	                            };
+        
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return _cell_param_type_strings[(int)value];
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string str = (string)value;
+            int idx = _cell_param_type_strings.FindIndex(item => item == str);
+            return (MotileCellParameterType)Enum.ToObject(typeof(MotileCellParameterType), (int)idx);
+        }
+    }
+    
+    // Base class for all cell parameters
+    [XmlInclude(typeof(LocomotorParams)),
+     XmlInclude(typeof(CkReceptorParams)),
+     XmlInclude(typeof(CkReceptorInitParams))]
+    public class MotileCellParams
+    {
+        [XmlIgnore]
+        public MotileCellParameterType motile_cell_parameter_type { get; protected set; }
+
+        public MotileCellParams()
+        {
+        }
+    }
+
+    public class LocomotorParams : MotileCellParams
     {
         public double loco_gamma { get; set; }
         public double loco_sigma { get; set; }
@@ -515,6 +611,8 @@ namespace SerializationTest1
 
         public LocomotorParams()
         {
+            motile_cell_parameter_type = MotileCellParameterType.Locomotor;
+
             loco_gamma = 1.0;
             loco_sigma = 1.0;
             loco_zeta = 1.0;
@@ -522,7 +620,7 @@ namespace SerializationTest1
         }
     }
 
-    public class CkReceptorParams
+    public class CkReceptorParams : MotileCellParams
     {
         public double ckr_kappa { get; set; }
         public double ckr_pi { get; set; }
@@ -531,6 +629,8 @@ namespace SerializationTest1
 
         public CkReceptorParams()
         {
+            motile_cell_parameter_type = MotileCellParameterType.CkReceptor;
+
             ckr_kappa = 1.0;
             ckr_pi = 1.0;
             ckr_tau = 1.0;
@@ -538,12 +638,14 @@ namespace SerializationTest1
         }
     }
 
-    public class CkReceptorInitParams
+    public class CkReceptorInitParams : MotileCellParams
     {
         public double ckri_u { get; set; }
 
         public CkReceptorInitParams()
         {
+            motile_cell_parameter_type = MotileCellParameterType.CkReceptorInit;
+
             ckri_u = 1.0;
         }
     }

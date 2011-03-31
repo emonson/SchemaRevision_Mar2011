@@ -10,8 +10,11 @@
     <CollectionViewSource x:Key="cellTypesListView" />
     <CollectionViewSource x:Key="solfacsListView" />
     <CollectionViewSource x:Key="solfacTypesListView" />
+    <CollectionViewSource x:Key="cellTypeParametersListView" />
+    <CollectionViewSource x:Key="globalParameterTypesListView" />
 
-    <!-- REGIONS -->
+    <!-- =========================== -->
+    <!-- Regions -->
     <ObjectDataProvider x:Key="regionShapes"
                     MethodName="GetValues" 
                     ObjectType="{x:Type sys:Enum}">
@@ -31,7 +34,9 @@
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="name" Margin="6,0" />
-                <TextBox Text="{Binding Path=region_name, UpdateSourceTrigger=PropertyChanged}" />
+                <!-- NOTE: Editing the region name when it's being used by a cell screws up the reference... -->
+                <!-- TODO: Maybe add an "Edit name" button?? -->
+                <TextBlock Text="{Binding Path=region_name, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="type" Margin="6,0" />
@@ -114,7 +119,9 @@
         </StackPanel>
     </DataTemplate>
 
-    <!-- CELLS -->
+    <!-- =========================== -->
+    <!-- Cells -->
+    
     <DataTemplate x:Key="cellTypeListItemTemplate">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Path=cell_type_name}"/>
@@ -191,6 +198,7 @@
                        HorizontalAlignment="Right" VerticalAlignment="Center"
                        IsEnabled="{Binding ElementName=constrain_to_region_checkbox, Path=IsChecked}"
                        />
+            <!-- NOTE: Editing the region name when it's being used by a cell screws up the reference... -->
             <ComboBox Name="cell_region_cbox"
                       Grid.Column="1" Grid.Row="4" 
                       IsEnabled="{Binding ElementName=constrain_to_region_checkbox, Path=IsChecked}"
@@ -201,6 +209,17 @@
                       SelectedValuePath="region_name"
                       />
         </Grid>
+    </DataTemplate>
+
+    <!-- =========================== -->
+    <!-- Cell Types -->
+    
+    <c:MotileCellParamTypeToStringConverter x:Key="CellParameterTypeEnumConv"/>
+    
+    <DataTemplate x:Key="cellTypeParamsListItemTemplate">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=motile_cell_parameter_type, Converter={StaticResource CellParameterTypeEnumConv}}"/>
+        </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="cellTypeDetailsTemplate">
@@ -215,16 +234,87 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <TextBlock Text="name" Margin="6,0"
-                           Grid.Column="0" Grid.Row="0"  
-                           HorizontalAlignment="Right" VerticalAlignment="Center"
-                           />
+                       Grid.Column="0" Grid.Row="0"  
+                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                       />
             <TextBox Text="{Binding Path=cell_type_name, UpdateSourceTrigger=PropertyChanged}"
-                         Grid.Column="1" Grid.Row="0"
-                         />
+                     Grid.Column="1" Grid.Row="0"
+                     />
+            <ListView Name="cellParametersListView"
+                      Grid.ColumnSpan="2" Grid.Row="1"
+                      ItemTemplate="{Binding Source={StaticResource cellTypeParamsListItemTemplate}}"
+                      ItemsSource="{Binding Path=cell_type_parameters}"
+                      />
+            <ContentControl x:Name="cellParametersDetailBox"
+                            Grid.ColumnSpan="2" Grid.Row="2"
+                            Content="{Binding ElementName=cellParametersListView, Path=SelectedItem}"
+                            />
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type c:LocomotorParams}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="gamma" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"/>
+            <TextBox Text="{Binding Path=loco_gamma}" Grid.Column="1" Grid.Row="0" MinWidth="30"/>
+            <TextBlock Text="sigma" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=loco_sigma}" Grid.Column="1" Grid.Row="1" MinWidth="30"/>
+            <TextBlock Text="zeta" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=loco_zeta}" Grid.Column="1" Grid.Row="2" MinWidth="30"/>
+            <TextBlock Text="chi" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=loco_chi}" Grid.Column="1" Grid.Row="3" MinWidth="30"/>
         </Grid>
     </DataTemplate>
 
-    <!-- SOLFACS -->
+    <DataTemplate DataType="{x:Type c:CkReceptorParams}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="kappa" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"/>
+            <TextBox Text="{Binding Path=ckr_kappa}" Grid.Column="1" Grid.Row="0" MinWidth="30"/>
+            <TextBlock Text="pi" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=ckr_pi}" Grid.Column="1" Grid.Row="1" MinWidth="30"/>
+            <TextBlock Text="tau" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=ckr_tau}" Grid.Column="1" Grid.Row="2" MinWidth="30"/>
+            <TextBlock Text="delta" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=ckr_delta}" Grid.Column="1" Grid.Row="3" MinWidth="30"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type c:CkReceptorInitParams}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="u" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"/>
+            <TextBox Text="{Binding Path=ckri_u}" Grid.Column="1" Grid.Row="0" MinWidth="30"/>
+        </Grid>
+    </DataTemplate>
+
+    <!-- =========================== -->
+    <!-- Solfacs -->
+    
     <ObjectDataProvider x:Key="solfacDistributionTypes"
                     MethodName="GetValues" 
                     ObjectType="{x:Type sys:Enum}">
@@ -236,12 +326,6 @@
     <DataTemplate x:Key="solfacListItemTemplate">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Path=solfac_name}"/>
-        </StackPanel>
-    </DataTemplate>
-
-    <DataTemplate x:Key="solfacTypeListItemTemplate">
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding Path=solfac_type_name}"/>
         </StackPanel>
     </DataTemplate>
 
@@ -309,7 +393,7 @@
             <!-- TODO: Need to tie a change in this to changing this solfac distribution... -->
             <ComboBox Grid.Column="1" Grid.Row="2"
                           ItemsSource="{Binding Source={StaticResource solfacDistributionTypes}}"
-                          SelectedValue="{Binding Path=solfac_distribution.solfac_distribution_type}"
+                          SelectedValue="{Binding Path=solfac_distribution.solfac_distribution_type, Mode=OneWay}"
                           IsSynchronizedWithCurrentItem="true" 
                           MinWidth="120"
                           />
@@ -318,6 +402,15 @@
                                 Content="{Binding Path=solfac_distribution}"
                                 />
         </Grid>
+    </DataTemplate>
+
+    <!-- =========================== -->
+    <!-- Solfac Types -->
+    
+    <DataTemplate x:Key="solfacTypeListItemTemplate">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=solfac_type_name}"/>
+        </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="solfacTypeDetailsTemplate">
@@ -341,4 +434,104 @@
                          />
         </Grid>
     </DataTemplate>
+
+    <!-- =========================== -->
+    <!-- Gaussian Gradients -->
+
+    <DataTemplate x:Key="gaussianGradientsListItemTemplate">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=gaussian_spec_name}"/>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="gaussianGradientDetailsTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="name" Margin="6,0"
+                           Grid.Column="0" Grid.Row="0"  
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           />
+            <TextBox Text="{Binding Path=gaussian_spec_name, UpdateSourceTrigger=PropertyChanged}"
+                         Grid.Column="1" Grid.Row="0"
+                         />
+        </Grid>
+    </DataTemplate>
+    <!-- =========================== -->
+    <!-- Global Paramter Types -->
+
+    <c:GlobalParamTypeToStringConverter x:Key="GlobalParameterTypeEnumConv"/>
+
+    <DataTemplate x:Key="globalParamterTypeListItemTemplate">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=global_parameter_type, Converter={StaticResource GlobalParameterTypeEnumConv}}"/>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="globalParameterTypeDetailsTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <ContentControl Name="global_params_detail_cc"
+                                Grid.ColumnSpan="2" Grid.Row="1"
+                                Content="{Binding /}"
+                                />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type c:ForceParams}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="delta" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"/>
+            <TextBox Text="{Binding Path=force_delta}" Grid.Column="1" Grid.Row="0" MinWidth="30"/>
+            <TextBlock Text="phi1" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=force_phi1}" Grid.Column="1" Grid.Row="1" MinWidth="30"/>
+            <TextBlock Text="phi2" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=force_phi2}" Grid.Column="1" Grid.Row="2" MinWidth="30"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type c:JunkParams}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="amplitude" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"/>
+            <TextBox Text="{Binding Path=junk_1}" Grid.Column="1" Grid.Row="0" MinWidth="30"/>
+            <TextBlock Text="number" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=junk_2}" Grid.Column="1" Grid.Row="1" MinWidth="30"/>
+            <TextBlock Text="name ref" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Text="{Binding Path=junk_3}" Grid.Column="1" Grid.Row="2" MinWidth="30"/>
+        </Grid>
+    </DataTemplate>
+
+
 </ResourceDictionary>

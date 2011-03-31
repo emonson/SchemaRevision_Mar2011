@@ -21,72 +21,220 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         
-        <TabControl Grid.Column="0" TabStripPlacement="Bottom">
+        <TabControl Name="ConfigTabControl" Grid.Column="0" TabStripPlacement="Bottom">
             
             <!-- SIM SETUP -->
             <TabItem Header="Sim Setup">
-                <ScrollViewer Grid.Row="0" 
-                              Margin="0,0,0,16"
-                              VerticalScrollBarVisibility="Auto">
-                    <StackPanel Orientation="Vertical" Margin="8">
+                <StackPanel Name="ConfigStackPanel" Orientation="Vertical" Margin="8">
 
-                        <!-- Regions -->
-                        <TextBlock Text="Regions" FontWeight="Bold" Margin="0,5,0,0" />
-                        <ListBox Name="RegionsListBox" MinHeight="50" 
-                             ItemsSource="{Binding Source={StaticResource regionsListView}}"
-                             ItemTemplate="{Binding Source={StaticResource regionListItemTemplate}}"
-                             GotFocus="RegionsListBox_GotFocus"
-                             SelectionChanged="RegionsListBox_SelectionChanged"
-                             />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Name="AddRegionButton"  Width="50" Content="Add" Click="AddRegionButton_Click" IsEnabled="False"/>
-                            <Button Name="RemoveRegionButton" Width="50" Content="Remove" Click="RemoveRegionButton_Click" IsEnabled="False"/>
-                        </StackPanel>
-                        <ContentControl Name="RegionDetails"
-                                    Content="{Binding Source={StaticResource regionsListView}}" 
-                                    ContentTemplate="{StaticResource regionDetailsTemplate}" 
-                                    Margin="8"/>
+                    <!-- Experiment -->
+                    <TextBlock Text="Experiment name" FontWeight="Bold" Margin="0,5,0,0" />
+                    <TextBox Text="{Binding Path=experiment_name}" />
+                    <TextBlock Text="Description" FontWeight="Bold" Margin="0,5,0,0" />
+                    <TextBox Text="{Binding Path=description}" TextWrapping="Wrap"
+                                Height="40" MaxWidth="240"
+                                VerticalScrollBarVisibility="Auto"/>
 
-                        <!-- Cells -->
-                        <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
-                                      Stretch="Fill" X1="0" X2="10" />
-                        <TextBlock Text="Cells" FontWeight="Bold" Margin="0,5,0,0" />
-                        <ListBox Name="CellsListBox" MinHeight="50" 
-                             ItemsSource="{Binding Source={StaticResource cellsListView}}" 
-                             ItemTemplate="{Binding Source={StaticResource cellListItemTemplate}}"
-                             />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click" IsEnabled="False"/>
-                            <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" IsEnabled="False"/>
-                        </StackPanel>
-                        <ContentControl Name="CellDetails"
-                                    Content="{Binding Source={StaticResource cellsListView}}" 
-                                    ContentTemplate="{StaticResource cellDetailsTemplate}" 
-                                    Margin="8"/>
-
-                        <!-- Solfacs -->
-                        <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
-                                      Stretch="Fill" X1="0" X2="10" />
-                        <TextBlock Text="Solfacs" FontWeight="Bold" Margin="0,5,0,0" />
-                        <ListBox Name="SolfacsListBox" MinHeight="50" 
-                                 ItemsSource="{Binding Source={StaticResource solfacsListView}}" 
-                                 ItemTemplate="{Binding Source={StaticResource solfacListItemTemplate}}"
-                                 />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Name="AddSolfacButton"  Width="50" Content="Add" Click="AddSolfacButton_Click" IsEnabled="False"/>
-                            <Button Name="RemoveSolfacButton" Width="50" Content="Remove" Click="RemoveSolfacButton_Click" IsEnabled="False"/>
-                        </StackPanel>
-                        <ContentControl Name="SolfacDetails"
-                                    Content="{Binding Source={StaticResource solfacsListView}}" 
-                                    ContentTemplate="{StaticResource solfacDetailsTemplate}" 
-                                    Margin="8"/>
-
+                    <!-- TimeConfig -->
+                    <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                    Stretch="Fill" X1="0" X2="10" />
+                    <TextBlock Text="Time configuration" FontWeight="Bold" Margin="0,5,0,0" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="duration" Margin="6,0"
+                            Grid.Column="0" Grid.Row="2"  
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Width="60"
+                            />
+                            <Slider Name="time_duration_slider"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Width="100"
+                            RenderTransform="1.0,0,0,0.5,0,7"
+                            Minimum="1" 
+                            Maximum="1000" 
+                            Value="{Binding Path=scenario.time_config.duration}" 
+                            IsSnapToTickEnabled="True" 
+                            TickFrequency="1" 
+                            />
+                            <TextBlock Name="TimeDurationReadout" 
+                                Text="{Binding ElementName=time_duration_slider, Path=Value}" 
+                                VerticalAlignment="Center"
+                                        TextAlignment="Right"
+                                        Margin="5,0,0,0"
+                                        MinWidth="50"
+                                />
                     </StackPanel>
-                </ScrollViewer>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="time step" Margin="6,0"
+                            Grid.Column="0" Grid.Row="2"  
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Width="60"
+                            />
+                        <Slider Name="time_step_slider"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Width="100"
+                            RenderTransform="1.0,0,0,0.5,0,7"
+                            Minimum="0.1" 
+                            Maximum="10" 
+                            Value="{Binding Path=scenario.time_config.timestep}" 
+                            IsSnapToTickEnabled="True" 
+                            TickFrequency="0.1" 
+                            />
+                        <TextBlock Name="TimeStepReadout" 
+                                    Text="{Binding ElementName=time_step_slider, Path=Value}" 
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Margin="5,0,0,0"
+                                    MinWidth="50"
+                                />
+                    </StackPanel>
+
+                    <!-- Environment -->
+                    <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                    Stretch="Fill" X1="0" X2="10" />
+                    <TextBlock Text="Environment extents" FontWeight="Bold" Margin="0,5,0,0" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X" Margin="6,0"
+                            Grid.Column="0" Grid.Row="2"  
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Width="60"
+                            />
+                        <Slider Name="extent_x_slider"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Width="100"
+                            RenderTransform="1.0,0,0,0.5,0,7"
+                            Minimum="1" 
+                            Maximum="1000" 
+                            Value="{Binding Path=scenario.environment.extent_x}" 
+                            IsSnapToTickEnabled="True" 
+                            TickFrequency="1" 
+                            />
+                        <TextBlock Name="ExtentXReadout" 
+                                Text="{Binding ElementName=extent_x_slider, Path=Value}" 
+                                VerticalAlignment="Center"
+                                        TextAlignment="Right"
+                                        Margin="5,0,0,0"
+                                        MinWidth="50"
+                                />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Y" Margin="6,0"
+                            Grid.Column="0" Grid.Row="2"  
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Width="60"
+                            />
+                        <Slider Name="extent_y_slider"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Width="100"
+                            RenderTransform="1.0,0,0,0.5,0,7"
+                            Minimum="0.1" 
+                            Maximum="10" 
+                            Value="{Binding Path=scenario.environment.extent_y}" 
+                            IsSnapToTickEnabled="True" 
+                            TickFrequency="0.1" 
+                            />
+                        <TextBlock Name="ExtentYReadout" 
+                                    Text="{Binding ElementName=extent_y_slider, Path=Value}" 
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Margin="5,0,0,0"
+                                    MinWidth="50"
+                                />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Z" Margin="6,0"
+                            Grid.Column="0" Grid.Row="2"  
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Width="60"
+                            />
+                        <Slider Name="extent_z_slider"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Width="100"
+                            RenderTransform="1.0,0,0,0.5,0,7"
+                            Minimum="0.1" 
+                            Maximum="10" 
+                            Value="{Binding Path=scenario.environment.extent_z}" 
+                            IsSnapToTickEnabled="True" 
+                            TickFrequency="0.1" 
+                            />
+                        <TextBlock Name="ExtentZReadout" 
+                                    Text="{Binding ElementName=extent_z_slider, Path=Value}" 
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Margin="5,0,0,0"
+                                    MinWidth="50"
+                                />
+                    </StackPanel>
+
+                    <!-- Regions -->
+                    <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                    Stretch="Fill" X1="0" X2="10" />
+                    <TextBlock Text="Regions" FontWeight="Bold" Margin="0,5,0,0" />
+                    <ListBox Name="RegionsListBox" MinHeight="50" 
+                            ItemsSource="{Binding Source={StaticResource regionsListView}}"
+                            ItemTemplate="{Binding Source={StaticResource regionListItemTemplate}}"
+                            GotFocus="RegionsListBox_GotFocus"
+                            SelectionChanged="RegionsListBox_SelectionChanged"
+                            />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Name="AddRegionButton"  Width="50" Content="Add" Click="AddRegionButton_Click" IsEnabled="False"/>
+                        <Button Name="RemoveRegionButton" Width="50" Content="Remove" Click="RemoveRegionButton_Click" IsEnabled="False"/>
+                    </StackPanel>
+                    <ContentControl Name="RegionDetails"
+                                Content="{Binding Source={StaticResource regionsListView}}" 
+                                ContentTemplate="{StaticResource regionDetailsTemplate}" 
+                                Margin="8"/>
+                    </StackPanel>
             </TabItem>
             
-            <!-- ENTITY REPOSITORY -->
-            <TabItem Header="Entity Repository">
+            <!-- ENTITIES -->
+            <TabItem Header="Entities">
+                <StackPanel Name="EntitiesStackPanel" Orientation="Vertical" Margin="8">
+                    <!-- Cells -->
+                    <TextBlock Text="Cells" FontWeight="Bold" Margin="0,5,0,0" />
+                    <ListBox Name="CellsListBox" MinHeight="50" 
+                                 ItemsSource="{Binding Source={StaticResource cellsListView}}" 
+                                 ItemTemplate="{Binding Source={StaticResource cellListItemTemplate}}"
+                                 />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Name="AddCellButton"  Width="50" Content="Add" Click="AddCellButton_Click" IsEnabled="False"/>
+                        <Button Name="RemoveCellButton" Width="50" Content="Remove" Click="RemoveCellButton_Click" IsEnabled="False"/>
+                    </StackPanel>
+                    <ContentControl Name="CellDetails"
+                                        Content="{Binding Source={StaticResource cellsListView}}" 
+                                        ContentTemplate="{StaticResource cellDetailsTemplate}" 
+                                        Margin="8"/>
+
+                    <!-- Solfacs -->
+                    <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                          Stretch="Fill" X1="0" X2="10" />
+                    <TextBlock Text="Solfacs" FontWeight="Bold" Margin="0,5,0,0" />
+                    <ListBox Name="SolfacsListBox" MinHeight="50" 
+                                     ItemsSource="{Binding Source={StaticResource solfacsListView}}" 
+                                     ItemTemplate="{Binding Source={StaticResource solfacListItemTemplate}}"
+                                     />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Name="AddSolfacButton"  Width="50" Content="Add" Click="AddSolfacButton_Click" IsEnabled="False"/>
+                        <Button Name="RemoveSolfacButton" Width="50" Content="Remove" Click="RemoveSolfacButton_Click" IsEnabled="False"/>
+                    </StackPanel>
+                    <ContentControl Name="SolfacDetails"
+                                        Content="{Binding Source={StaticResource solfacsListView}}" 
+                                        ContentTemplate="{StaticResource solfacDetailsTemplate}" 
+                                        Margin="8"/>
+                </StackPanel>
+            </TabItem>
+            
+            <!-- REPOSITORY -->
+            <TabItem Header="Repository">
                 <StackPanel Orientation="Vertical" Margin="8">
 
                     <!-- Cell Types -->
@@ -120,6 +268,23 @@
                                     Content="{Binding Source={StaticResource solfacTypesListView}}" 
                                     ContentTemplate="{StaticResource solfacTypeDetailsTemplate}" 
                                     Margin="8"/>
+
+                    <!-- Gaussian Gradients -->
+                    <Line Margin="0,5" SnapsToDevicePixels="True" Stroke="LightGray"
+                                      Stretch="Fill" X1="0" X2="10" />
+                    <TextBlock Text="Gaussian Gradients" FontWeight="Bold" Margin="0,5,0,0" />
+                    <ListBox Name="GaussianGradientsListBox" MinHeight="50" 
+                                 ItemsSource="{Binding Source={StaticResource gaussianGradientsListView}}" 
+                                 ItemTemplate="{Binding Source={StaticResource gaussianGradientsListItemTemplate}}"
+                                 />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Name="AddGaussGradientButton"  Width="50" Content="Add" Click="AddGaussGradientButton_Click" IsEnabled="False"/>
+                        <Button Name="RemoveGaussGradientButton" Width="50" Content="Remove" Click="RemoveGaussGradientButton_Click" IsEnabled="False"/>
+                    </StackPanel>
+                    <ContentControl Name="GaussGradientDetails"
+                                    Content="{Binding Source={StaticResource gaussianGradientsListView}}" 
+                                    ContentTemplate="{StaticResource gaussianGradientDetailsTemplate}" 
+                                    Margin="8"/>
                 </StackPanel>
             </TabItem>
 
@@ -127,8 +292,17 @@
             <TabItem Header="Params">
                 <StackPanel Orientation="Vertical" Margin="8">
 
-                    <!-- Force Parameters -->
-                    <TextBlock Text="Force Parameters" FontWeight="Bold" Margin="0,5,0,0" />
+                    <!-- Parameter Types -->
+                    <TextBlock Text="Global Parameters" FontWeight="Bold" Margin="0,5,0,0" />
+                    <ListBox Name="ParameterTypesListBox" MinHeight="50" 
+                             ItemsSource="{Binding Source={StaticResource globalParameterTypesListView}}" 
+                             ItemTemplate="{Binding Source={StaticResource globalParamterTypeListItemTemplate}}"
+                             />
+                    <ContentControl Name="GlobalParameterTypeDetails"
+                                    Content="{Binding Source={StaticResource globalParameterTypesListView}}" 
+                                    ContentTemplate="{StaticResource globalParameterTypeDetailsTemplate}" 
+                                    Margin="8"/>
+                    
                 </StackPanel>
             </TabItem>
         </TabControl>
