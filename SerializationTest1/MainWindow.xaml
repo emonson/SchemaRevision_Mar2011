@@ -29,10 +29,10 @@
 
                     <!-- Experiment -->
                     <TextBlock Text="Experiment name" FontWeight="Bold" Margin="0,5,0,0" />
-                    <TextBox Text="{Binding Path=experiment_name}" />
+                    <TextBox Text="{Binding Path=experiment_name}" Name="experiment_name_box"/>
                     <TextBlock Text="Description" FontWeight="Bold" Margin="0,5,0,0" />
                     <TextBox Text="{Binding Path=description}" TextWrapping="Wrap"
-                                Height="40" MaxWidth="240"
+                                Height="40" MaxWidth="{Binding ElementName=experiment_name_box, Path=ActualWidth}"
                                 VerticalScrollBarVisibility="Auto"/>
 
                     <!-- TimeConfig -->
@@ -134,11 +134,11 @@
                             VerticalAlignment="Center"
                             Width="100"
                             RenderTransform="1.0,0,0,0.5,0,7"
-                            Minimum="0.1" 
-                            Maximum="10" 
+                            Minimum="1" 
+                            Maximum="1000" 
                             Value="{Binding Path=scenario.environment.extent_y}" 
                             IsSnapToTickEnabled="True" 
-                            TickFrequency="0.1" 
+                            TickFrequency="1" 
                             />
                         <TextBlock Name="ExtentYReadout" 
                                     Text="{Binding ElementName=extent_y_slider, Path=Value}" 
@@ -160,11 +160,11 @@
                             VerticalAlignment="Center"
                             Width="100"
                             RenderTransform="1.0,0,0,0.5,0,7"
-                            Minimum="0.1" 
-                            Maximum="10" 
+                            Minimum="1" 
+                            Maximum="1000" 
                             Value="{Binding Path=scenario.environment.extent_z}" 
                             IsSnapToTickEnabled="True" 
-                            TickFrequency="0.1" 
+                            TickFrequency="1" 
                             />
                         <TextBlock Name="ExtentZReadout" 
                                     Text="{Binding ElementName=extent_z_slider, Path=Value}" 

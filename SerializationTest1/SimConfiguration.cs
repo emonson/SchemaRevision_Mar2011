@@ -290,6 +290,28 @@ namespace SerializationTest1
                 }
             }
         }
+        public double y_direction
+        {
+            get { return gradient_direction[1]; }
+            set
+            {
+                if (value != gradient_direction[1])
+                {
+                    gradient_direction[1] = value;
+                }
+            }
+        }
+        public double z_direction
+        {
+            get { return gradient_direction[2]; }
+            set
+            {
+                if (value != gradient_direction[2])
+                {
+                    gradient_direction[2] = value;
+                }
+            }
+        }
 
         public SolfacLinearGradient()
         {
