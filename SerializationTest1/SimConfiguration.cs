@@ -49,6 +49,7 @@ namespace SerializationTest1
     
     public class SimConfiguration
     {
+        public int id { get; set; }
         public string experiment_name { get; set; }
         public string description { get; set; }
         public Scenario scenario { get; set; }
@@ -57,11 +58,30 @@ namespace SerializationTest1
 
         public SimConfiguration()
         {
+            id = 0;
             experiment_name = "Experiment1";
             description = "Whole sim config description";
             scenario = new Scenario();
             global_parameters = new ObservableCollection<GlobalParameters>();
             entity_repository = new EntityRepository();
+        }
+
+        public void CreateExpName()
+        {
+            //This is a temporary solution which just randomly generates a new experiment name and ID
+            //description = "This is just a placeholder for simulated experiment info";
+            //string namestub = "TrialExp";
+            //Dictionary<string, int> exps = DataBaseTools.GetExperiments();
+            //int largeid = 0;
+            //foreach (KeyValuePair<string, int> entry in exps)
+            //{
+            //    if (entry.Value >= largeid)
+            //    {
+            //        largeid = entry.Value + 1;
+            //    }
+            //}
+            //experiment_name = namestub + largeid.ToString();
+            //id = DataBaseTools.CreateNewExperiment(experiment_name, description);
         }
 
         public void LoadDefaultGlobalParameters()
@@ -221,8 +241,10 @@ namespace SerializationTest1
         public string solfac_type_ref { get; set; }
         public SolfacDistribution solfac_distribution { get; set; }
         public bool solfac_is_time_varying { get; set; }
-        public List<TimeAmpPair> solfac_amplitude_keyframes { get; set; }
+        public ObservableCollection<TimeAmpPair> solfac_amplitude_keyframes { get; set; }
         public System.Windows.Media.Color solfac_color { get; set; }
+        public double solfac_render_blending_weight { get; set; }
+        public bool solfac_render_on { get; set; }
 
         public Solfac()
         {
@@ -231,9 +253,11 @@ namespace SerializationTest1
             // Default is static homogeneous level
             solfac_distribution = new SolfacHomogeneousLevel();
             solfac_is_time_varying = false;
-            solfac_amplitude_keyframes = new List<TimeAmpPair>();
+            solfac_amplitude_keyframes = new ObservableCollection<TimeAmpPair>();
             solfac_color = new System.Windows.Media.Color();
             solfac_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
+            solfac_render_blending_weight = 1.0;
+            solfac_render_on = true;
         }
     }
 
@@ -339,12 +363,14 @@ namespace SerializationTest1
     {
         public string gaussian_spec_name { get; set; }
         public BoxSpecification gaussian_box_spec { get; set; }
+        public bool gaussian_region_visibility { get; set; }
         public System.Windows.Media.Color gaussian_spec_color { get; set; }
 
         public GaussianSpecification()
         {
             gaussian_spec_name = "Default gaussian gradient name";
             gaussian_box_spec = new BoxSpecification();
+            gaussian_region_visibility = true;
             gaussian_spec_color = new System.Windows.Media.Color();
             gaussian_spec_color = System.Windows.Media.Color.FromRgb(255, 255, 255);
         }

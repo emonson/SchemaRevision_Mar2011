@@ -324,6 +324,16 @@ namespace SerializationTest1
 
         }
 
+        private void AddSolfacTimeAmpButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RemoveSolfacTimeAmpButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void RegionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             vtkTransform vtk_transform = vtkTransform.New();

@@ -14,6 +14,83 @@
     <CollectionViewSource x:Key="globalParameterTypesListView" />
 
     <!-- =========================== -->
+    <!-- Box Specification -->
+    <DataTemplate x:Key="boxSpecDetailsTemplate">
+        <Grid Margin="0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="translation" Grid.Column="1" Grid.Row="0" />
+            <TextBlock Text="scale" Grid.Column="2" Grid.Row="0" />
+            <TextBlock Text="X :" Grid.Column="0" Grid.Row="1" TextAlignment="Right"/>
+            <Slider Name="x_trans_slider"
+                            Grid.Column="1" Grid.Row="1"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="-5" 
+                            Maximum="5"
+                            Value="{Binding Path=x_trans}" 
+                        />
+            <Slider Name="x_scale_slider"
+                            Grid.Column="2" Grid.Row="1"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="0" 
+                            Maximum="20"
+                            Value="{Binding Path=x_scale}" 
+                        />
+            <TextBlock Text="Y :" Grid.Column="0" Grid.Row="2" TextAlignment="Right" />
+            <Slider Name="y_trans_slider"
+                            Grid.Column="1" Grid.Row="2"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="-5" 
+                            Maximum="5"
+                            Value="{Binding Path=y_trans}" 
+                        />
+            <Slider Name="y_scale_slider"
+                            Grid.Column="2" Grid.Row="2"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="0" 
+                            Maximum="20"
+                            Value="{Binding Path=y_scale}" 
+                        />
+            <TextBlock Text="Z :" Grid.Column="0" Grid.Row="3" TextAlignment="Right" />
+            <Slider Name="z_trans_slider"
+                            Grid.Column="1" Grid.Row="3"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="-5" 
+                            Maximum="5"
+                            Value="{Binding Path=z_trans}" 
+                        />
+            <Slider Name="z_scale_slider"
+                            Grid.Column="2" Grid.Row="3"
+                            Orientation="Horizontal"
+                            Width="60"
+                            RenderTransform="1.0,0,0,0.5,0,4"
+                            Minimum="0" 
+                            Maximum="20"
+                            Value="{Binding Path=z_scale}" 
+                        />
+        </Grid>
+    </DataTemplate>
+
+    <!-- =========================== -->
     <!-- Regions -->
     <ObjectDataProvider x:Key="regionShapes"
                     MethodName="GetValues" 
@@ -40,6 +117,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <!-- NOTE: Editing the region name when it's being used by a cell screws up the reference... -->
                 <!-- TODO: Maybe add an "Edit name" button?? -->
@@ -60,78 +138,10 @@
                           IsSynchronizedWithCurrentItem="true" 
                           />
             </Grid>
-            <Grid Margin="0,6">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <TextBlock Text="translation" Grid.Column="1" Grid.Row="0" />
-                <TextBlock Text="scale" Grid.Column="2" Grid.Row="0" />
-                <TextBlock Text="X :" Grid.Column="0" Grid.Row="1" TextAlignment="Right"/>
-                <Slider Name="x_trans_slider"
-                            Grid.Column="1" Grid.Row="1"
-                            Orientation="Horizontal"
-                            Width="60"
-                            RenderTransform="1.0,0,0,0.5,0,4"
-                            Minimum="-5" 
-                            Maximum="5"
-                            Value="{Binding Path=region_box_spec.x_trans}" 
-                        />
-                <Slider Name="x_scale_slider"
-                            Grid.Column="2" Grid.Row="1"
-                            Orientation="Horizontal"
-                            Width="60"
-                            RenderTransform="1.0,0,0,0.5,0,4"
-                            Minimum="0" 
-                            Maximum="20"
-                            Value="{Binding Path=region_box_spec.x_scale}" 
-                        />
-                <TextBlock Text="Y :" Grid.Column="0" Grid.Row="2" TextAlignment="Right" />
-                <Slider Name="y_trans_slider"
-                            Grid.Column="1" Grid.Row="2"
-                            Orientation="Horizontal"
-                            Width="60"
-                            RenderTransform="1.0,0,0,0.5,0,4"
-                            Minimum="-5" 
-                            Maximum="5"
-                            Value="{Binding Path=region_box_spec.y_trans}" 
-                        />
-                <Slider Name="y_scale_slider"
-                            Grid.Column="2" Grid.Row="2"
-                            Orientation="Horizontal"
-                            Width="60"
-                            RenderTransform="1.0,0,0,0.5,0,4"
-                            Minimum="0" 
-                            Maximum="20"
-                            Value="{Binding Path=region_box_spec.y_scale}" 
-                        />
-                <TextBlock Text="Z :" Grid.Column="0" Grid.Row="3" TextAlignment="Right" />
-                <Slider Name="z_trans_slider"
-                            Grid.Column="1" Grid.Row="3"
-                            Orientation="Horizontal"
-                            Width="60"
-                            RenderTransform="1.0,0,0,0.5,0,4"
-                            Minimum="-5" 
-                            Maximum="5"
-                            Value="{Binding Path=region_box_spec.z_trans}" 
-                        />
-                <Slider Name="z_scale_slider"
-                            Grid.Column="2" Grid.Row="3"
-                            Orientation="Horizontal"
-                            Width="60"
-                            RenderTransform="1.0,0,0,0.5,0,4"
-                            Minimum="0" 
-                            Maximum="20"
-                            Value="{Binding Path=region_box_spec.z_scale}" 
-                        />
-            </Grid>
+            <ContentControl Name="RegionBoxSpecDetails"
+                            Content="{Binding Path=region_box_spec}" 
+                            ContentTemplate="{StaticResource boxSpecDetailsTemplate}" 
+                            Margin="0,8"/>
         </StackPanel>
     </DataTemplate>
 
@@ -373,6 +383,15 @@
         </StackPanel>
     </DataTemplate>
 
+    <DataTemplate x:Key="solfacTimeAmpListItemTemplate">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Time="/>
+            <TextBlock Text="{Binding Path=time_value}"/>
+            <TextBlock Text=", Amp="/>
+            <TextBlock Text="{Binding Path=amplitude}"/>
+        </StackPanel>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type c:SolfacHomogeneousLevel}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -504,6 +523,9 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <TextBlock Text="name" Margin="6,0"
                            Grid.Column="0" Grid.Row="0"  
@@ -539,6 +561,38 @@
                             BorderBrush="DarkGray" BorderThickness="1"
                             Content="{Binding Path=solfac_distribution}"
                             />
+            <CheckBox Name="solfac_render_checkbox"
+                      Content="Render"
+                      Grid.Column="0" Grid.Row="4"
+                      Margin="0,6"
+                      IsChecked="{Binding Path=solfac_render_on}"
+                      />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4"
+                        IsEnabled="{Binding ElementName=solfac_render_checkbox, Path=IsChecked}">
+                <TextBlock Text="Weight" Margin="6,0"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           TextAlignment="Right"
+                            />
+                <Slider Name="solfac_weight_slider"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Width="50"
+                            RenderTransform="1.0,0,0,0.5,0,7"
+                            Minimum="0" 
+                            Maximum="1" 
+                            Value="{Binding Path=solfac_render_blending_weight}" 
+                            IsSnapToTickEnabled="True" 
+                            TickFrequency="0.1" 
+                            />
+                <TextBlock Name="SolfacWeightReadout" 
+                           Text="{Binding ElementName=solfac_weight_slider, Path=Value}" 
+                           VerticalAlignment="Center"
+                           TextAlignment="Right"
+                           Margin="5,0,0,0"
+                           MinWidth="20"
+                           />
+            </StackPanel>
+
         </Grid>
     </DataTemplate>
 
@@ -583,25 +637,31 @@
     </DataTemplate>
 
     <DataTemplate x:Key="gaussianGradientDetailsTemplate">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="70" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <TextBlock Text="name" Margin="6,0"
-                           Grid.Column="0" Grid.Row="0"  
-                           HorizontalAlignment="Right" VerticalAlignment="Center"
-                           />
-            <TextBox Text="{Binding Path=gaussian_spec_name, UpdateSourceTrigger=PropertyChanged}"
-                         Grid.Column="1" Grid.Row="0"
-                         />
-        </Grid>
+        <StackPanel Orientation="Vertical">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="name" Margin="6,0"
+                               Grid.Column="0" Grid.Row="0"  
+                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                               />
+                <TextBox Text="{Binding Path=gaussian_spec_name, UpdateSourceTrigger=PropertyChanged}"
+                             Grid.Column="1" Grid.Row="0"
+                             />
+            </Grid>
+            <ContentControl Name="RegionBoxSpecDetails"
+                            Content="{Binding Path=gaussian_box_spec}" 
+                            ContentTemplate="{StaticResource boxSpecDetailsTemplate}" 
+                            Margin="0,8"/>
+        </StackPanel>
     </DataTemplate>
     <!-- =========================== -->
     <!-- Global Paramter Types -->

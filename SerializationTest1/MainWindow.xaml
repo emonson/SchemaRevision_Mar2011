@@ -4,7 +4,7 @@
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:c="clr-namespace:SerializationTest1"
-        Title="MainWindow" Height="700" Width="750">
+        Title="MainWindow" Height="800" Width="750">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -230,6 +230,27 @@
                                         Content="{Binding Source={StaticResource solfacsListView}}" 
                                         ContentTemplate="{StaticResource solfacDetailsTemplate}" 
                                         Margin="8"/>
+                    <StackPanel Orientation="Vertical"
+                                Margin="8,0"
+                                DataContext="{Binding Source={StaticResource solfacsListView}}">
+                        <CheckBox Name="solfac_time_varying_checkbox"
+                              Content="Time Varying"
+                              Grid.Column="0" Grid.Row="5"
+                              Margin="0,6"
+                              IsChecked="{Binding Path=solfac_is_time_varying}"
+                              />
+                        <ListView Name="solfacTimeAmpListView"
+                                  Margin="0,6"
+                                  ItemTemplate="{Binding Source={StaticResource solfacTimeAmpListItemTemplate}}"
+                                  ItemsSource="{Binding Path=solfac_amplitude_keyframes}"
+                                  IsEnabled="{Binding ElementName=solfac_time_varying_checkbox, Path=IsChecked}"
+                                  />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                    IsEnabled="{Binding ElementName=solfac_time_varying_checkbox, Path=IsChecked}">
+                            <Button Name="AddSolfacTimeAmpButton"  Width="50" Content="Add" Click="AddSolfacTimeAmpButton_Click" IsEnabled="False"/>
+                            <Button Name="RemoveSolfacTimeAmpButton" Width="50" Content="Remove" Click="RemoveSolfacTimeAmpButton_Click" IsEnabled="False"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
             
